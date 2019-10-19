@@ -1,4 +1,4 @@
 rootProject.name = 'micromanager'
 
-include 'backend'
-include 'frontend'
+include ':backend', ':android'
+include ':android'
