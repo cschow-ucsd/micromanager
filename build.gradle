@@ -3,9 +3,11 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
+        google()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.android.tools.build:gradle:3.5.1'
     }
 }
 
@@ -30,4 +32,8 @@ subprojects {
         maven { url "https://dl.bintray.com/kotlin/ktor" }
         maven { url "https://dl.bintray.com/kotlin/squash" }
     }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
