@@ -8,7 +8,7 @@
         tools:context=".MainActivity">
 
     <TextView
-            android:text="Hello from MainActivity!"
+            android:text="@string/hello"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"

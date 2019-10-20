@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">android</string>
+    <string name="hello">Hello from strings.xml</string>
 </resources>

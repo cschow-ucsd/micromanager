@@ -1,4 +1,3 @@
 rootProject.name = 'micromanager'
 
 include ':backend', ':android'
-include ':android'

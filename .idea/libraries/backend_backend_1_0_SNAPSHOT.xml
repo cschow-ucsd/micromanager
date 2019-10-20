@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="backend.backend-1.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/backend/build/libs/backend-1.0-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
