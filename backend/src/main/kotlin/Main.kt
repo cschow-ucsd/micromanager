@@ -3,7 +3,6 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 
 fun main() {
-    println("something")
     val server = embeddedServer(
             factory = Netty,
             port = 8080,
