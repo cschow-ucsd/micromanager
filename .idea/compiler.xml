@@ -4,6 +4,14 @@
     <bytecodeTargetLevel>
       <module name="Base11-FC_main" target="1.8" />
       <module name="Base11-FC_test" target="1.8" />
+      <module name="com.example.common.jvmMain" target="1.6" />
+      <module name="com.example.common.jvmTest" target="1.6" />
+      <module name="common_jvmMain" target="1.6" />
+      <module name="common_jvmTest" target="1.6" />
+      <module name="micromanager.common.jvmMain" target="1.8" />
+      <module name="micromanager.common.jvmTest" target="1.8" />
+      <module name="micromanager.common_jvmMain" target="1.6" />
+      <module name="micromanager.common_jvmTest" target="1.6" />
     </bytecodeTargetLevel>
   </component>
 </project>
