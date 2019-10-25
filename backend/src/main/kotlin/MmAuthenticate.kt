@@ -1,3 +1,6 @@
+import MmAuthenticate.GOOGLE_OAUTH
+import MmAuthenticate.LOGIN
+import MmAuthenticate.TYPE
 import io.github.cdimascio.dotenv.dotenv
 import io.ktor.application.ApplicationCall
 import io.ktor.application.ApplicationEnvironment
@@ -50,9 +53,9 @@ private val providers = listOf(
                 authorizeUrl = "https://accounts.google.com/o/oauth2/auth",
                 accessTokenUrl = "https://www.googleapis.com/oauth2/v3/token",
                 requestMethod = HttpMethod.Post,
-                clientId = dotenv["OAUTH_ANDROID_API_KEY"]!!,
+                clientId = dotenv["OAUTH_ANDROID_API_KEY"]!!.also { println("OAuth: Found Android API Key.") },
                 clientSecret = "", // no android secret key
-                defaultScopes = listOf("profile")
+                defaultScopes = listOf("profile", "../auth/calendar")
         )
 ).associateBy { it.name }
 
@@ -65,22 +68,22 @@ fun Authentication.Configuration.mmOAuthConfiguration(
     basic {
         skipWhen { it.sessions.get<MmSession>() != null }
     }
-    oauth(MmAuthenticate.GOOGLE_OAUTH) {
+    oauth(GOOGLE_OAUTH) {
         client = HttpClient(Apache).apply {
             environment.monitor.subscribe(ApplicationStopping) {
                 close()
             }
         }
-        providerLookup = { providers[parameters[MmAuthenticate.TYPE]] }
-        urlProvider = { redirectUrl("/$MmAuthenticate.LOGIN") }
+        providerLookup = { providers[parameters[TYPE]] }
+        urlProvider = { redirectUrl("/$LOGIN") }
     }
 }
 
 /**
  * Authentication routing; logs in user.
  */
-fun Routing.mmAuthenticate() = authenticate(MmAuthenticate.GOOGLE_OAUTH) {
-    route("/${MmAuthenticate.LOGIN}/{${MmAuthenticate.TYPE}?}") {
+fun Routing.mmAuthenticate() = authenticate(GOOGLE_OAUTH) {
+    route("/$LOGIN/{$TYPE?}") {
         param("error") {
             handle {
                 // TODO: Send JSON response of failed login

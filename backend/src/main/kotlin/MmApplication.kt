@@ -1,12 +1,21 @@
+import com.fasterxml.jackson.databind.SerializationFeature
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
+import io.ktor.features.ContentNegotiation
+import io.ktor.features.callId
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.jackson.jackson
+import io.ktor.response.respond
 import io.ktor.response.respondText
+import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.sessions.*
+import io.ktor.util.pipeline.PipelineContext
 
 /**
  * Handles the installs of features and routing of all API calls.
@@ -22,23 +31,14 @@ fun Application.main() {
     install(Authentication) {
         mmOAuthConfiguration(environment)
     }
+    install(ContentNegotiation) {
+        jackson {
+            enable(SerializationFeature.INDENT_OUTPUT)
+        }
+    }
 
     routing {
-
-        fun ApplicationCall.mmSession() = sessions.get<MmSession>()
-        suspend fun ApplicationCall.respondIfAuth(
-                block: suspend (MmSession) -> Unit
-        ) {
-            sessions.get<MmSession>()?.let { block }
-                    ?: respondText("Did not login") // TODO: respond did not login
-        }
-
-        get("/") {
-            call.mmSession()?.let {
-                println("Session ID: ${it.userId}")
-                call.respondText("Some data") // TODO: respond appropriate data
-            } ?: call.respondText("Did not login")
-        }
+        mmApi()
         mmAuthenticate()
     }
 }
