@@ -46,7 +46,7 @@ private val providers = listOf(
                 requestMethod = HttpMethod.Post,
                 clientId = dotenv["OAUTH_ANDROID_API_KEY"]!!.also { logger.debug("OAuth: Found Android API Key.") },
                 clientSecret = "", // no android secret key
-                defaultScopes = listOf("profile", "../auth/calendar")
+                defaultScopes = listOf("profile", "https://www.googleapis.com/auth/calendar")
         )
 ).associateBy { it.name }
 
@@ -76,13 +76,15 @@ fun Authentication.Configuration.mmOAuthConfiguration(
         skipWhen { it.sessions.get<MmSession>() != null }
     }
     oauth(GOOGLE_OAUTH) {
+        val authType: ApplicationCall.() -> String? = { parameters[TYPE] }
+
         client = HttpClient(Apache).apply {
             environment.monitor.subscribe(ApplicationStopping) {
                 close()
             }
         }
-        providerLookup = { providers[parameters[TYPE]] }
-        urlProvider = { redirectUrl("/$LOGIN") }
+        providerLookup = { providers[authType()] }
+        urlProvider = { redirectUrl("/$LOGIN/${authType()}") }
     }
 }
 
@@ -90,11 +92,11 @@ fun Authentication.Configuration.mmOAuthConfiguration(
  * Authentication routing; logs in user.
  */
 fun Routing.mmAuthenticate() = authenticate(GOOGLE_OAUTH) {
-    route("/$LOGIN/{$TYPE?}") {
+    route("/$LOGIN/{$TYPE}") {
         param("error") {
             handle {
                 call.respond(MmResponse.LoginFailed)
-                logger.debug("User login failed.")
+                logger.debug("User login failed 1.")
             }
         }
         handle {
@@ -106,7 +108,7 @@ fun Routing.mmAuthenticate() = authenticate(GOOGLE_OAUTH) {
                 logger.debug("User login success!")
             } else {
                 call.respond(MmResponse.LoginFailed)
-                logger.debug("User login failed.")
+                logger.debug("User login failed 2.")
             }
         }
     }

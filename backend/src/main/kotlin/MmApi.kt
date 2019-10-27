@@ -21,6 +21,10 @@ fun Routing.mmApi() {
             respond("Hello World!")
         }
     }
+    get("/test/{something}") {
+        logger.error(call.parameters.toString())
+        call.respond("Hi")
+    }
 }
 
 private suspend inline fun <R> ApplicationCall.errorAware(
