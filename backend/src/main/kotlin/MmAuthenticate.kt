@@ -13,29 +13,20 @@ import io.ktor.features.origin
 import io.ktor.http.HttpMethod
 import io.ktor.request.host
 import io.ktor.request.port
-import io.ktor.response.respondText
+import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.param
 import io.ktor.routing.route
 import io.ktor.sessions.get
 import io.ktor.sessions.sessions
 import io.ktor.sessions.set
+import org.slf4j.LoggerFactory
 
 /**
- * Authentication constants.
+ * Logger for authentication.
+ * Reports authentication messages.
  */
-object MmAuthenticate {
-
-    const val GOOGLE_OAUTH = "google-oauth"
-    const val TYPE = "type"
-    const val LOGIN = "login"
-}
-
-/**
- * Custom session identifier.
- * Determines if a user has logged in.
- */
-inline class MmSession(val userId: String)
+private val logger = LoggerFactory.getLogger("MmAuthenticate")
 
 /**
  * Gets API Keys from .env file in root of project.
@@ -53,11 +44,27 @@ private val providers = listOf(
                 authorizeUrl = "https://accounts.google.com/o/oauth2/auth",
                 accessTokenUrl = "https://www.googleapis.com/oauth2/v3/token",
                 requestMethod = HttpMethod.Post,
-                clientId = dotenv["OAUTH_ANDROID_API_KEY"]!!.also { println("OAuth: Found Android API Key.") },
+                clientId = dotenv["OAUTH_ANDROID_API_KEY"]!!.also { logger.debug("OAuth: Found Android API Key.") },
                 clientSecret = "", // no android secret key
                 defaultScopes = listOf("profile", "../auth/calendar")
         )
 ).associateBy { it.name }
+
+/**
+ * Authentication constants.
+ */
+object MmAuthenticate {
+    const val GOOGLE_OAUTH = "google-oauth"
+    const val TYPE = "type"
+    const val LOGIN = "login"
+
+}
+
+/**
+ * Custom session identifier.
+ * Determines if a user has logged in.
+ */
+inline class MmSession(val userId: String)
 
 /**
  * Configuration settings for OAuth.
@@ -86,19 +93,20 @@ fun Routing.mmAuthenticate() = authenticate(GOOGLE_OAUTH) {
     route("/$LOGIN/{$TYPE?}") {
         param("error") {
             handle {
-                // TODO: Send JSON response of failed login
-                call.respondText("Login failed")
+                call.respond(MmResponse.LoginFailed)
+                logger.debug("User login failed.")
             }
         }
         handle {
+            // checks if user is authenticated
             val principle = call.authentication.principal<OAuthAccessTokenResponse.OAuth2>()
             if (principle != null) {
                 call.sessions.set(MmSession(principle.extraParameters["screen_name"] ?: ""))
-                // TODO: Send JSON response of failed login
-                call.respondText("Login successful!")
+                call.respond(MmResponse.LoginSuccess)
+                logger.debug("User login success!")
             } else {
-                // TODO: Send JSON response of failed login
-                call.respondText("Login failed")
+                call.respond(MmResponse.LoginFailed)
+                logger.debug("User login failed.")
             }
         }
     }

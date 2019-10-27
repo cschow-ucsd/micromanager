@@ -3,12 +3,7 @@ import io.ktor.http.HttpStatusCode
 sealed class MmResponse(
         val statusCode: HttpStatusCode,
         val message: String
-) : HashMap<String, Any>() {
-    init {
-        super.put(::statusCode.name, statusCode)
-        super.put(::message.name, message)
-    }
-
+) {
     object LoginSuccess : MmResponse(
             statusCode = HttpStatusCode.OK,
             message = "Login success!"
@@ -22,5 +17,12 @@ sealed class MmResponse(
     object NoLogin : MmResponse(
             statusCode = HttpStatusCode.Forbidden,
             message = "No login."
+    )
+
+    data class SuccessData(
+            val data: Map<String, Any>
+    ) : MmResponse(
+            statusCode = HttpStatusCode.OK,
+            message = "Response success!"
     )
 }
