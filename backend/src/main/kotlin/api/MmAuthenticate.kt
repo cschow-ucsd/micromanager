@@ -63,25 +63,3 @@ fun Authentication.Configuration.mmOAuthConfiguration() {
         }
     }
 }
-
-/**
- * Authentication routing; logs in user.
- */
-//fun Route.mmAuthenticate() = authenticate {
-//    param("error") {
-//        handle {
-//            call.respond(MmResponse.LoginFailed)
-//            logger.debug("User login failed 1.")
-//        }
-//    }
-//    handle {
-//        val principal = call.authentication.principal<OAuthAccessTokenResponse.OAuth2>()
-//        if (principal == null) {
-//            call.respond(MmResponse.LoginFailed)
-//            logger.debug("User login failed 2.")
-//        } else {
-//            logger.debug("User login successful.")
-//        }
-//    }
-//    mmProtectedApi()
-//}
