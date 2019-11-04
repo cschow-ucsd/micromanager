@@ -1,3 +1,5 @@
+package api
+
 import io.ktor.http.HttpStatusCode
 
 sealed class MmResponse(
@@ -6,12 +8,12 @@ sealed class MmResponse(
 ) {
     object LoginSuccess : MmResponse(
             statusCode = HttpStatusCode.OK,
-            message = "Login success!"
+            message = "api.Login success!"
     )
 
     object LoginFailed : MmResponse(
             statusCode = HttpStatusCode.Unauthorized,
-            message = "Login failed."
+            message = "api.Login failed."
     )
 
     object NoLogin : MmResponse(
@@ -24,5 +26,12 @@ sealed class MmResponse(
     ) : MmResponse(
             statusCode = HttpStatusCode.OK,
             message = "Response success!"
+    )
+
+    data class ApiToken(
+            val token: String
+    ) : MmResponse(
+            statusCode = HttpStatusCode.OK,
+            message = "API token."
     )
 }

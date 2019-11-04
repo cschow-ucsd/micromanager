@@ -17,7 +17,17 @@ dependencies {
     compile "io.ktor:ktor-server-netty:$ktor_version"
     implementation "io.ktor:ktor-client-apache:$ktor_version"
     implementation "io.ktor:ktor-auth:$ktor_version"
-    implementation "io.ktor:ktor-jackson:$ktor_version"
+    implementation "io.ktor:ktor-gson:$ktor_version"
+    implementation "io.ktor:ktor-client-gson:$ktor_version"
+    implementation "io.ktor:ktor-auth-jwt:$ktor_version"
+    implementation "io.ktor:ktor-client-json-jvm:$ktor_version"
+    implementation "io.ktor:ktor-client-auth-jvm:$ktor_version"
+
+    // scheduling library
+    implementation 'org.optaplanner:optaplanner-core:7.28.0.Final'
+
+    // google OAuth
+    compile 'com.google.api-client:google-api-client:1.30.2'
 
     // hide API keys
     compile 'io.github.cdimascio:java-dotenv:5.1.3'

@@ -2,7 +2,6 @@ package ucsd.ieeeqp.fa19;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -15,18 +14,21 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
-import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
-import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ClassicHttpResponse;
-import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.jetbrains.annotations.NotNull;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import ucsd.ieeeqp.fa19.service.MmService;
+import ucsd.ieeeqp.fa19.service.MmServiceUtil;
+import ucsd.ieeeqp.fa19.service.TestResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestProfile()
+                .requestIdToken(getString(R.string.oauth_client_id))
+                .requestEmail()
                 .requestScopes(new Scope("https://www.googleapis.com/auth/calendar"))
                 .build();
         // Build a GoogleSignInClient with the options specified by gso.
@@ -69,29 +72,23 @@ public class MainActivity extends AppCompatActivity {
     private void updateUI(final GoogleSignInAccount account) {
         // TODO: update UI after verified login with backend
         if (account == null) {
-            Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No account", Toast.LENGTH_SHORT).show();
+        } else if (account.getIdToken() == null) {
+            Toast.makeText(this, "No token", Toast.LENGTH_SHORT).show();
         } else {
-            Runnable serverLogin = new Runnable() {
-
-                @Override
-                public void run() {
-                    String idToken = account.getIdToken();
-                    CloseableHttpClient httpClient = HttpClients.createDefault();
-                    HttpPost httpPost = new HttpPost(MmApiUtils.LOGIN_URL);
-                    try {
-                        List<NameValuePair> nameValuePairs = new ArrayList<>(1);
-                        nameValuePairs.add(new BasicNameValuePair("id", idToken));
-                        httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-                        ClassicHttpResponse response = httpClient.execute(httpPost);
-                        final String body = EntityUtils.toString(response.getEntity());
-                        Log.d(TAG, "HttpResponse: " + body);
-                    } catch (Exception e) {
-                        Log.e(TAG, "HttpResponse exception: " + e.getMessage(), e);
-                    }
-                }
-            };
-            new Thread(serverLogin).start();
+//            MmServiceUtil.service.getProtected(
+//                    new MmClientGoogleAuthToken(account.getIdToken())
+//            ).enqueue(new Callback<TestResponse>() {
+//                @Override
+//                public void onResponse(@NotNull Call<TestResponse> call, @NotNull Response<TestResponse> response) {
+//                    Log.d(TAG, "onResponse: " + response.body());
+//                }
+//
+//                @Override
+//                public void onFailure(@NotNull Call<TestResponse> call, @NotNull Throwable t) {
+//                    Log.e(TAG, "onFailure: Backend server authentication failed", t);
+//                }
+//            });
         }
         //launch new activity
     }
@@ -117,13 +114,16 @@ public class MainActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
+            if (account != null) {
+                Log.d(TAG, "handleSignInResult: email: " + account.getEmail());
+                Log.d(TAG, "handleSignInResult: ID token: " + account.getIdToken());
+            }
             // Signed in successfully, show authenticated UI.
             updateUI(account);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.e(TAG, "signInResult:failed code=" + e.getStatusCode());
+            Log.e(TAG, "signInResult: failed code=" + e.getStatusCode() + "; message=" + e.getMessage());
             updateUI(null);
         }
     }
