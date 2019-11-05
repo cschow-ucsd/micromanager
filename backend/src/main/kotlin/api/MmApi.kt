@@ -48,18 +48,3 @@ fun Route.mmProtectedApi() = authenticate {
         }
     }
 }
-
-//private suspend inline fun <R> ApplicationCall.errorAware(
-//        block: ApplicationCall.() -> R
-//): R? = try {
-//    if (sessions.get<MmSession>() != null || principal<OAuthAccessTokenResponse.OAuth2>() != null) {
-//        block()
-//    } else {
-//        respond(MmResponse.NoLogin)
-//        application.environment.log.debug("No logged in session found.")
-//        null
-//    }
-//} catch (e: Exception) {
-//    application.environment.log.error("Error: ${e.message}")
-//    null
-//}
