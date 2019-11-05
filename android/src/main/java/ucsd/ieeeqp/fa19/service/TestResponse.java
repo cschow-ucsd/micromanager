@@ -1,28 +1,19 @@
 package ucsd.ieeeqp.fa19.service;
 
 public class TestResponse {
-    private String message;
+    private boolean OK;
+    private String body;
 
-    public TestResponse() {
-        this("");
+    public TestResponse(boolean OK, String body) {
+        this.OK = OK;
+        this.body = body;
     }
 
-    public TestResponse(String message) {
-        this.message = message;
+    public boolean isOK() {
+        return OK;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    @Override
-    public String toString() {
-        return "TestResponse{" +
-                "message='" + message + '\'' +
-                '}';
+    public String getBody() {
+        return body;
     }
 }

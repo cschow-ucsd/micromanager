@@ -52,8 +52,8 @@ class ApiCallTest {
     }
 
     @Test
-    fun testGoogleSignIn() = runBlocking {
-        val response = client.get<MmResponse> {
+    fun testProtectedApi() = runBlocking {
+        val response = client.get<String> {
             url("http://localhost:8080/api/protected")
             contentType(ContentType.Application.Json)
         }

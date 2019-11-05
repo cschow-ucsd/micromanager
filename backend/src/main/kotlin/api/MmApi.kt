@@ -1,11 +1,11 @@
 package api
 
-import io.ktor.application.ApplicationCall
 import io.ktor.application.call
-import io.ktor.auth.OAuthAccessTokenResponse
+import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
 import io.ktor.auth.basicAuthenticationCredentials
 import io.ktor.auth.principal
+import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
@@ -32,17 +32,18 @@ fun Route.mmPublicApi() {
  * Can only be accessed if session exists or logged in.
  */
 fun Route.mmProtectedApi() = authenticate {
-    route("/api") {
-        handle {
-            if (call.principal<OAuthAccessTokenResponse.OAuth2>() != null) {
-                val mmSession = call.sessions.get<MmSession>() ?: MmSession(0)
-                call.sessions.set(mmSession.copy(counter = mmSession.counter + 1))
-            } else {
-                call.respond(MmResponse.NoLogin)
-            }
+    handle {
+        val principal = call.principal<UserIdPrincipal>()
+        if (principal != null) {
+            val mmSession = call.sessions.get<MmSession>() ?: MmSession(principal.name, 0)
+            call.application.environment.log.debug(mmSession.toString())
+            call.sessions.set(mmSession.copy(counter = mmSession.counter + 1))
+        } else {
+            call.respond(HttpStatusCode.Unauthorized)
         }
-
-        get("protected") {
+    }
+    route("/api") {
+        get("/protected") {
             call.respond("It's protected!")
         }
     }

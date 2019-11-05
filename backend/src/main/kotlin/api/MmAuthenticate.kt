@@ -1,22 +1,20 @@
 package api
 
-import com.google.api.client.auth.openidconnect.IdToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
-import io.ktor.application.log
 import io.ktor.auth.Authentication
-import io.ktor.auth.OAuthAccessTokenResponse
+import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.basic
-import io.ktor.features.callId
 import io.ktor.sessions.get
 import io.ktor.sessions.sessions
+import org.apache.http.auth.AuthenticationException
 
 /**
  * Verifies Google sign in tokens sent from client.
  */
-val googleIdTokenVerifier: GoogleIdTokenVerifier = GoogleIdTokenVerifier.Builder(
+private val googleIdTokenVerifier: GoogleIdTokenVerifier = GoogleIdTokenVerifier.Builder(
         NetHttpTransport(),
         JacksonFactory.getDefaultInstance()
 ).setAudience(listOf(mmDotenv.BACKEND_OAUTH_CLIENT_ID))
@@ -27,6 +25,7 @@ val googleIdTokenVerifier: GoogleIdTokenVerifier = GoogleIdTokenVerifier.Builder
  * Determines if a user has logged in.
  */
 data class MmSession(
+        val email: String,
         val counter: Int
 )
 
@@ -35,31 +34,30 @@ data class MmSession(
  */
 fun Authentication.Configuration.mmOAuthConfiguration() {
     basic {
+        // skip if session exists
         skipWhen { it.sessions.get<MmSession>() != null }
-    }
-    basic {
+
+        // authenticate if no session found
         realm = "Ktor Server"
         validate { credentials ->
 
             // authenticate token with Google
-            val stringIdToken = credentials.password
-            val idToken: GoogleIdToken? = googleIdTokenVerifier.verify(stringIdToken)
-
-            // log to indicate success or failure
-            application.environment.log.debug(
-                    if (idToken != null) "Authentication Successful"
-                    else "Authentication failed"
-            )
-
-            // create an OAuth token based on GoogleIdToken response
-            return@validate idToken?.payload?.let {
-                OAuthAccessTokenResponse.OAuth2(
-                        accessToken = it.accessTokenHash,
-                        tokenType = it.type,
-                        expiresIn = it.expirationTimeSeconds,
-                        refreshToken = null
-                )
+            val stringIdToken: String = credentials.password
+            val idToken: GoogleIdToken = try {
+                googleIdTokenVerifier.verify(stringIdToken)!!
+            } catch (exception: Exception) {
+                val specificException = when (exception) {
+                    is KotlinNullPointerException -> AuthenticationException("Authentication failed, invalid token.")
+                    is IllegalArgumentException -> IllegalArgumentException("Illegal arguments, invalid token.")
+                    else -> exception
+                }
+                application.environment.log.debug(exception.message)
+                throw specificException
             }
+
+            // successful if ID token is obtained
+            application.environment.log.debug("Authentication successful.")
+            return@validate UserIdPrincipal(idToken.payload.email)
         }
     }
 }
