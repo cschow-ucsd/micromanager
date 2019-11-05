@@ -24,7 +24,7 @@ class GoogleSignInTest {
     // insert email, e.g. BraBeep@ucsd.edu
     private val email = ""
     // insert backend Oauth client ID
-    private val backendOauthClientId = "168037840247-anu4hfobuqucmnpfsflvfbnrgjcp4m9i.apps.googleusercontent.com"
+    private val backendOauthClientId = ""
 
     @BeforeTest
     fun setup() {
