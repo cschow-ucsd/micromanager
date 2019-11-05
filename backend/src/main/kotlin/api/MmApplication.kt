@@ -1,5 +1,6 @@
 package api
 
+import BACKEND_TRANSFORMER_HEX
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -16,8 +17,8 @@ import io.ktor.sessions.Sessions
 import io.ktor.sessions.header
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.hex
+import mmDotenv
 import org.apache.http.auth.AuthenticationException
-import java.lang.IllegalArgumentException
 
 /**
  * Handles the installs of features and routing of all API calls.

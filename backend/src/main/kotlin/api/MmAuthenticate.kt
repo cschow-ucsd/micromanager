@@ -1,5 +1,6 @@
 package api
 
+import BACKEND_OAUTH_CLIENT_ID
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.javanet.NetHttpTransport
@@ -9,6 +10,7 @@ import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.basic
 import io.ktor.sessions.get
 import io.ktor.sessions.sessions
+import mmDotenv
 import org.apache.http.auth.AuthenticationException
 
 /**
@@ -40,7 +42,6 @@ fun Authentication.Configuration.mmOAuthConfiguration() {
         // authenticate if no session found
         realm = "Ktor Server"
         validate { credentials ->
-
             // authenticate token with Google
             val stringIdToken: String = credentials.password
             val idToken: GoogleIdToken = try {
@@ -51,7 +52,7 @@ fun Authentication.Configuration.mmOAuthConfiguration() {
                     is IllegalArgumentException -> IllegalArgumentException("Illegal arguments, invalid token.")
                     else -> exception
                 }
-                application.environment.log.debug(exception.message)
+                application.environment.log.debug(specificException.message)
                 throw specificException
             }
 

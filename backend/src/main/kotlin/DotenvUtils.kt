@@ -1,5 +1,3 @@
-package api
-
 import io.github.cdimascio.dotenv.Dotenv
 
 val mmDotenv: Dotenv = Dotenv.load()

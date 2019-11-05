@@ -19,10 +19,12 @@ class GoogleSignInTest {
     private data class GoogleTokenHttpResponse(val email: String)
 
     private lateinit var client: HttpClient
-    // insert token for testing
+    // insert token
     private val token = ""
-    //insert email for testing, e.g. BraBeep@ucsd.edu
+    // insert email, e.g. BraBeep@ucsd.edu
     private val email = ""
+    // insert backend Oauth client ID
+    private val backendOauthClientId = "168037840247-anu4hfobuqucmnpfsflvfbnrgjcp4m9i.apps.googleusercontent.com"
 
     @BeforeTest
     fun setup() {
@@ -51,7 +53,7 @@ class GoogleSignInTest {
         val verifier = GoogleIdTokenVerifier.Builder(
                 NetHttpTransport(),
                 JacksonFactory.getDefaultInstance()
-        ).setAudience(listOf("168037840247-anu4hfobuqucmnpfsflvfbnrgjcp4m9i.apps.googleusercontent.com"))
+        ).setAudience(listOf(backendOauthClientId))
                 .build()
 
         val token = verifier.verify(token)
