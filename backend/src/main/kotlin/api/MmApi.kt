@@ -33,14 +33,10 @@ fun Route.mmPublicApi() {
  */
 fun Route.mmProtectedApi() = authenticate {
     handle {
-        val principal = call.principal<UserIdPrincipal>()
-        if (principal != null) {
-            val mmSession = call.sessions.get<MmSession>() ?: MmSession(principal.name, 0)
-            call.application.environment.log.debug(mmSession.toString())
-            call.sessions.set(mmSession.copy(counter = mmSession.counter + 1))
-        } else {
-            call.respond(HttpStatusCode.Unauthorized)
-        }
+        val principal = requireNotNull(call.principal<UserIdPrincipal>())
+        val mmSession = call.sessions.get<MmSession>() ?: MmSession(principal.name, 0)
+        call.application.environment.log.debug(mmSession.toString())
+        call.sessions.set(mmSession.copy(counter = mmSession.counter + 1))
     }
     route("/api") {
         get("/protected") {
