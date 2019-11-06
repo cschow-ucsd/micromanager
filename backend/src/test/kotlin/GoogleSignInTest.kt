@@ -22,9 +22,7 @@ class GoogleSignInTest {
     private data class GoogleTokenHttpResponse(val email: String)
 
     private lateinit var client: HttpClient
-    // insert token
     private val token = testMmDotenv.CLIENT_OAUTH_TOKEN_TEST
-    // insert email, e.g. BraBeep@ucsd.edu
     private val email = testMmDotenv.CLIENT_EMAIL_TEST
 
     @BeforeTest
@@ -58,6 +56,6 @@ class GoogleSignInTest {
                 .build()
 
         val token = verifier.verify(token)
-        assertEquals(email, token.payload.email)
+        assertEquals(testMmDotenv.CLIENT_EMAIL_TEST, token.payload.email)
     }
 }
