@@ -52,7 +52,7 @@ public class GoogleSignInViewModel extends AndroidViewModel {
             GoogleSignInAccount newSignInAccount = completedTask.getResult(ApiException.class);
             accountLiveData.setValue(newSignInAccount);
             accountIsValidLiveData.setValue(true);
-            Log.d(TAG, "handleSignInResult: Sign in successful.");
+            Log.d(TAG, "handleSignInResult: Sign in successful. Token: " + newSignInAccount.getIdToken());
         } catch (ApiException e) {
             accountIsValidLiveData.setValue(false);
             accountLiveData.setValue(null);

@@ -9,6 +9,8 @@ import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
+import util.CLIENT_OAUTH_TOKEN_TEST
+import util.testMmDotenv
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -24,7 +26,7 @@ class ApiCallTest {
                     // empty username
                     username = ""
                     // insert token
-                    password = ""
+                    password = testMmDotenv.CLIENT_OAUTH_TOKEN_TEST
                 }
             }
             install(JsonFeature) {

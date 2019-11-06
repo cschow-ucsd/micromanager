@@ -1,10 +1,15 @@
 import io.github.cdimascio.dotenv.Dotenv
+import io.github.cdimascio.dotenv.dotenv
 
-val mmDotenv: Dotenv = Dotenv.load()
+val mmDotenv: Dotenv by lazy {
+    dotenv {
+        directory = "./backend/src/main/resources"
+    }
+}
 
-private fun Dotenv.requireOrMissing(
+fun Dotenv.requireOrMissing(
         name: String
-) = requireNotNull(this[name]) { "$name is missing, please add to .env file at project root." }
+) = requireNotNull(this[name]) { "$name is missing, please add to .env file at backend/src/main/resources folder." }
 
 val Dotenv.BACKEND_OAUTH_CLIENT_ID: String
     get() = requireOrMissing(::BACKEND_OAUTH_CLIENT_ID.name)

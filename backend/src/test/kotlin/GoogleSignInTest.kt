@@ -8,6 +8,9 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.get
 import io.ktor.client.request.url
 import kotlinx.coroutines.runBlocking
+import util.CLIENT_EMAIL_TEST
+import util.CLIENT_OAUTH_TOKEN_TEST
+import util.testMmDotenv
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -20,11 +23,9 @@ class GoogleSignInTest {
 
     private lateinit var client: HttpClient
     // insert token
-    private val token = ""
+    private val token = testMmDotenv.CLIENT_OAUTH_TOKEN_TEST
     // insert email, e.g. BraBeep@ucsd.edu
-    private val email = ""
-    // insert backend Oauth client ID
-    private val backendOauthClientId = ""
+    private val email = testMmDotenv.CLIENT_EMAIL_TEST
 
     @BeforeTest
     fun setup() {
@@ -53,7 +54,7 @@ class GoogleSignInTest {
         val verifier = GoogleIdTokenVerifier.Builder(
                 NetHttpTransport(),
                 JacksonFactory.getDefaultInstance()
-        ).setAudience(listOf(backendOauthClientId))
+        ).setAudience(listOf(testMmDotenv.BACKEND_OAUTH_CLIENT_ID))
                 .build()
 
         val token = verifier.verify(token)
