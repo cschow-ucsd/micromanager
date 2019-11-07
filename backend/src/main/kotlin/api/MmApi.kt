@@ -1,7 +1,7 @@
 package api
 
+import io.ktor.application.ApplicationCall
 import io.ktor.application.call
-import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
 import io.ktor.auth.basicAuthenticationCredentials
 import io.ktor.auth.principal
@@ -30,16 +30,21 @@ fun Route.mmPublicApi() {
  * Protected routes.
  * Can only be accessed if session exists or logged in.
  */
-fun Route.mmProtectedApi() = authenticate {
-    handle {
-        val principal = requireNotNull(call.principal<UserIdPrincipal>())
-        val mmSession = call.sessions.get<MmSession>() ?: MmSession(principal.name, 0)
-        call.application.environment.log.debug(mmSession.toString())
-        call.sessions.set(mmSession.copy(counter = mmSession.counter + 1))
-    }
+fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
     route("/api") {
         get("/protected") {
+            call.handleSession()
             call.respond("It's protected!")
         }
     }
+}
+
+private fun ApplicationCall.handleSession() {
+    val principal = principal<MmPrincipal>()
+    val mmSession = sessions.get<MmSession>()
+    if (principal == null && mmSession == null) {
+        throw NoPrincipalException("Missing principal!")
+    }
+    sessions.set(mmSession?.copy(count = mmSession.count + 1)
+            ?: MmSession(principal!!.expiration, principal.subject, 0))
 }

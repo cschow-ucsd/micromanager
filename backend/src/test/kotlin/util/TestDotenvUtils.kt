@@ -10,8 +10,8 @@ val testMmDotenv: Dotenv by lazy {
     }
 }
 
-val Dotenv.CLIENT_OAUTH_TOKEN_TEST: String
-    get() = requireOrMissing(::CLIENT_OAUTH_TOKEN_TEST.name)
+val Dotenv.CLIENT_SERVER_AUTH_TOKEN_TEST: String
+    get() = requireOrMissing(::CLIENT_SERVER_AUTH_TOKEN_TEST.name)
 
 val Dotenv.CLIENT_EMAIL_TEST: String
     get() = requireOrMissing(::CLIENT_EMAIL_TEST.name)

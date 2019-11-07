@@ -50,14 +50,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(Boolean isValid) {
                 if (isValid) {
-                    String idToken = gsiViewModel.getAccountLiveData().getValue().getIdToken();
-                    mmViewModel.initService(idToken);
-                    mmViewModel.fetchProtectedDataAsync();
+                    String serverAuthToken = gsiViewModel.getAccountLiveData().getValue().getServerAuthCode();
+                    if (serverAuthToken != null) {
+                        mmViewModel.initService(serverAuthToken);
+                        mmViewModel.fetchProtectedDataAsync();
+                    }
                 }
                 // TODO: If not valid then need to show the user
             }
         });
-        mmViewModel.protectedDataLiveData().observe(this, new Observer<TestResponse>() {
+        mmViewModel.getProtectedLiveData().observe(this, new Observer<TestResponse>() {
             @Override
             public void onChanged(TestResponse testResponse) {
                 if (testResponse != null) {

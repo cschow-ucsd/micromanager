@@ -5,11 +5,15 @@ import io.ktor.client.features.auth.providers.basic
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.url
+import io.ktor.client.response.HttpResponse
+import io.ktor.client.response.readText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
-import util.CLIENT_OAUTH_TOKEN_TEST
+import util.CLIENT_SERVER_AUTH_TOKEN_TEST
 import util.testMmDotenv
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -23,10 +27,8 @@ class ApiCallTest {
         client = HttpClient(Apache) {
             install(Auth) {
                 basic {
-                    // empty username
                     username = ""
-                    // insert token
-                    password = testMmDotenv.CLIENT_OAUTH_TOKEN_TEST
+                    password = testMmDotenv.CLIENT_SERVER_AUTH_TOKEN_TEST
                 }
             }
             install(JsonFeature) {
@@ -44,20 +46,15 @@ class ApiCallTest {
     }
 
     @Test
-    fun testEcho() = runBlocking {
-        val tokenFromServer = client.get<String> {
-            url("http://localhost:8080/echotoken")
-            contentType(ContentType.Application.Json)
-        }
-        println(tokenFromServer)
-    }
-
-    @Test
     fun testProtectedApi() = runBlocking {
-        val response = client.get<String> {
+        val response = client.get<HttpResponse> {
+            header("MICROMANAGER_SESSION", null)
             url("http://localhost:8080/api/protected")
             contentType(ContentType.Application.Json)
         }
-        println(response)
+        println("Headers: ${response.headers}")
+        println(response.headers["MICROMANAGER_SESSION"])
+        println("Text: ${response.readText()}")
+        val deferred: Deferred<String>
     }
 }

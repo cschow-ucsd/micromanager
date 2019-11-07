@@ -2,14 +2,11 @@ package api
 
 import BACKEND_TRANSFORMER_HEX
 import io.ktor.application.Application
-import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
 import io.ktor.gson.gson
-import io.ktor.http.HttpStatusCode
-import io.ktor.response.respond
 import io.ktor.routing.routing
 import io.ktor.sessions.SessionStorageMemory
 import io.ktor.sessions.SessionTransportTransformerMessageAuthentication
@@ -18,7 +15,6 @@ import io.ktor.sessions.header
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.hex
 import mmDotenv
-import org.apache.http.auth.AuthenticationException
 
 /**
  * Handles the installs of features and routing of all API calls.
@@ -33,18 +29,13 @@ fun Application.mmMain() {
         }
     }
     install(Sessions) {
-        header<MmSession>("KTOR_OAUTH_SESSION", SessionStorageMemory()) {
+        header<MmSession>("MICROMANAGER_SESSION", SessionStorageMemory()) {
             val hex = hex(mmDotenv.BACKEND_TRANSFORMER_HEX)
             transform(SessionTransportTransformerMessageAuthentication(hex))
         }
     }
     install(StatusPages) {
-        exception<AuthenticationException> {
-            call.respond(HttpStatusCode.Unauthorized)
-        }
-        exception<Throwable> {
-            call.respond(HttpStatusCode.InternalServerError)
-        }
+        mmStatusPagesConfiguration()
     }
     install(Authentication) {
         mmOAuthConfiguration()

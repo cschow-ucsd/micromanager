@@ -3,18 +3,20 @@ package ucsd.ieeeqp.fa19.model;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import ucsd.ieeeqp.fa19.service.MmResponseCallback;
+import kotlinx.coroutines.future.FutureKt;
 import ucsd.ieeeqp.fa19.service.MmService;
 import ucsd.ieeeqp.fa19.service.TestResponse;
+
+import java.util.concurrent.CompletableFuture;
 
 public class MmServiceViewModel extends ViewModel {
     private MmService mmService;
 
-    private MutableLiveData<TestResponse> protectedData = new MutableLiveData<>(null);
+    private MutableLiveData<TestResponse> protectedLiveData = new MutableLiveData<>(null);
 
-    public void initService(String idToken) {
+    public void initService(String serverAuthToken) {
         invalidateService();
-        mmService = new MmService(idToken);
+        mmService = new MmService(serverAuthToken);
     }
 
     public void invalidateService() {
@@ -25,21 +27,19 @@ public class MmServiceViewModel extends ViewModel {
     }
 
     public void fetchProtectedDataAsync() {
-        mmService.getProtectedAsync(new MmResponseCallback<String>() {
-            @Override
-            public void handleResponse(String response) {
-                protectedData.postValue(new TestResponse(true, response));
+        CompletableFuture<String> future = FutureKt.asCompletableFuture(mmService.getProtectedAsync());
+        future.handleAsync((result, exception) -> {
+            if (exception != null) {
+                protectedLiveData.postValue(new TestResponse(false, null));
+            } else {
+                protectedLiveData.postValue(new TestResponse(true, result));
             }
-
-            @Override
-            public void handleError(Throwable t) {
-                protectedData.postValue(new TestResponse(false, null));
-            }
+            return null;
         });
     }
 
-    public LiveData<TestResponse> protectedDataLiveData() {
-        return protectedData;
+    public LiveData<TestResponse> getProtectedLiveData() {
+        return protectedLiveData;
     }
 
     @Override

@@ -30,7 +30,7 @@ public class GoogleSignInViewModel extends AndroidViewModel {
 
         // sign in configuration
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(application.getString(R.string.oauth_client_id))
+                .requestServerAuthCode(application.getString(R.string.oauth_client_id))
                 .requestEmail()
                 .requestScopes(new Scope("https://www.googleapis.com/auth/calendar"))
                 .build();
@@ -42,8 +42,6 @@ public class GoogleSignInViewModel extends AndroidViewModel {
         if (existingAccount != null) {
             accountLiveData.setValue(existingAccount);
             accountIsValidLiveData.setValue(true);
-        } else {
-            handleSignInResult(client.silentSignIn());
         }
     }
 
@@ -52,7 +50,7 @@ public class GoogleSignInViewModel extends AndroidViewModel {
             GoogleSignInAccount newSignInAccount = completedTask.getResult(ApiException.class);
             accountLiveData.setValue(newSignInAccount);
             accountIsValidLiveData.setValue(true);
-            Log.d(TAG, "handleSignInResult: Sign in successful. Token: " + newSignInAccount.getIdToken());
+            Log.d(TAG, "handleSignInResult: Sign in successful. Server auth token: " + newSignInAccount.getServerAuthCode());
         } catch (ApiException e) {
             accountIsValidLiveData.setValue(false);
             accountLiveData.setValue(null);

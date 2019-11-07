@@ -1,32 +1,34 @@
 package ucsd.ieeeqp.fa19.service
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.receive
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.auth.Auth
 import io.ktor.client.features.auth.providers.basic
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.request.get
-import io.ktor.client.request.url
+import io.ktor.client.request.*
+import io.ktor.client.response.HttpResponse
+import io.ktor.client.response.HttpResponsePipeline
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 
 class MmService(
-        private val idToken: String
-) : CoroutineScope {
-
+        serverAuthToken: String
+) {
     companion object {
         const val BASE_URL = "http://localhost:8080"
+        private const val MICROMANAGER_SESSION = "MICROMANAGER_SESSION"
     }
 
-    override val coroutineContext: CoroutineContext = Dispatchers.Default + Job()
+    private var sessionHeader: String? = null
     private val client = HttpClient(Apache) {
         install(Auth) {
             basic {
                 username = ""
-                password = idToken // token is basically just a password without username
+                password = serverAuthToken
             }
         }
         install(JsonFeature) {
@@ -35,35 +37,33 @@ class MmService(
                 disableHtmlEscaping()
             }
         }
+    }.apply {
+        requestPipeline.intercept(HttpRequestPipeline.Before) {
+            if (sessionHeader != null) context.header(MICROMANAGER_SESSION, sessionHeader)
+        }
+        responsePipeline.intercept(HttpResponsePipeline.After) {
+            val sessionHeader = context.response.headers[MICROMANAGER_SESSION]
+            if (sessionHeader != null) this@MmService.sessionHeader = sessionHeader
+        }
     }
 
-    fun getProtectedAsync(
-            callback: MmResponseCallback<String>
-    ) = errorAwareLaunch(callback) {
-        val response = client.get<String> {
+    fun getProtectedAsync(): Deferred<String> = client.async {
+        val response = client.get<HttpResponse> {
             url(route("/api/protected"))
             contentType(ContentType.Application.Json)
         }
-        callback.handleResponse(response)
+        return@async response.receive<String>()
     }
 
     private fun route(
             path: String
     ): String = "$BASE_URL$path"
 
-    private fun <T> CoroutineScope.errorAwareLaunch(
-            callback: MmResponseCallback<T>,
-            block: suspend CoroutineScope.() -> Unit
-    ) = launch {
-        try {
-            block()
-        } catch (t: Throwable) {
-            callback.handleError(t)
-        }
+    fun close() {
+        client.close()
     }
 
-    fun close() {
-        coroutineContext.cancel()
-        client.close()
+    private fun HttpRequestBuilder.appendSessionHeader() {
+        sessionHeader?.let { header("MICROMANAGER_SESSION", it) }
     }
 }
