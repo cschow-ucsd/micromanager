@@ -12,7 +12,7 @@ fun StatusPages.Configuration.mmStatusPagesConfiguration() {
     exception<GoogleTokenException> {
         call.respond(HttpStatusCode.Unauthorized, it.jsonMessage)
     }
-    exception<NoPrincipalException> {
+    exception<NoSessionException> {
         call.respond(HttpStatusCode.Unauthorized, it.jsonMessage)
     }
     exception<MmException> {

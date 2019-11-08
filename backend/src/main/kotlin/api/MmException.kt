@@ -15,6 +15,6 @@ class GoogleTokenException(
         message: String
 ) : MmException(message)
 
-class NoPrincipalException(
+class NoSessionException(
         message: String
 ): MmException(message)

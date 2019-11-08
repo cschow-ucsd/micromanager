@@ -7,9 +7,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
-import util.CLIENT_EMAIL_TEST
-import util.CLIENT_SERVER_AUTH_TOKEN_TEST
-import util.testMmDotenv
+import util.*
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

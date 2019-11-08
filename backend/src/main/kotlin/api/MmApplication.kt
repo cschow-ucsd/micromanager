@@ -1,6 +1,5 @@
 package api
 
-import BACKEND_TRANSFORMER_HEX
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.auth.Authentication
@@ -14,7 +13,8 @@ import io.ktor.sessions.Sessions
 import io.ktor.sessions.header
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.hex
-import mmDotenv
+import util.BACKEND_TRANSFORMER_HEX
+import util.mmDotenv
 
 /**
  * Handles the installs of features and routing of all API calls.

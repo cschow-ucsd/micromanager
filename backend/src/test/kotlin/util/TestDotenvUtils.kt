@@ -2,7 +2,6 @@ package util
 
 import io.github.cdimascio.dotenv.Dotenv
 import io.github.cdimascio.dotenv.dotenv
-import requireOrMissing
 
 val testMmDotenv: Dotenv by lazy {
     dotenv {

@@ -9,13 +9,15 @@ class MmServiceTest {
     @Test
     fun testRepeatedApiCalls() = runBlocking {
         // insert server auth token
-        val serverAuthToken = ""
+        val serverAuthToken = "4/tAH3kIr0sDTdZZ5LAJMLweGjPArQK0bwl_0qDBnzz7jaHY2ZN2kitob12vkIhqN1eh66Q2GhE3tHX756_1aoLVs"
 
         val service = MmService(serverAuthToken)
         val responses = mutableListOf<String>()
         repeat(5) {
             delay(3000)
-            responses.add(service.getProtectedAsync().await())
+            val response = service.getProtectedAsync().await()
+            println(response)
+            responses.add(response)
         }
 
         assert(responses.all { it == responses[0] })
