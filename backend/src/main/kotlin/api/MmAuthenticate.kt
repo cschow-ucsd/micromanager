@@ -26,12 +26,20 @@ object MmAuthenticate {
 data class MmSession(
         val expireAt: Long,
         val accessToken: String,
+        val refreshToken: String?,
         val email: String,
         val subject: String,
         val count: Int
 ) {
     val isExpired: Boolean
         get() = System.currentTimeMillis() > expireAt
+
+    val debugInfo: String = """
+        Email: $email
+        Access Token: $accessToken
+        Refresh Token: $refreshToken
+        Expired: $isExpired
+    """.trimIndent()
 }
 
 /**
@@ -42,7 +50,11 @@ fun Authentication.Configuration.mmOAuthConfiguration() {
         // skip if session exists
         skipWhen {
             if (it.mmSession == null) return@skipWhen false
-            it.logger.debug("Found session. Subject: ${it.mmSession!!.subject}; Expired: ${it.mmSession!!.isExpired}")
+            val sessionInfo = """
+                Found existing MmSession.
+                ${it.mmSession!!.debugInfo}
+            """.trimIndent()
+            it.logger.debug(sessionInfo)
             return@skipWhen !it.mmSession!!.isExpired
         }
 
@@ -53,38 +65,40 @@ fun Authentication.Configuration.mmOAuthConfiguration() {
 
 private suspend fun ApplicationCall.basicValidation(
         credentials: UserPasswordCredential
-): Principal? {
-    val oldSession = this.mmSession
-    return when {
-        oldSession == null -> {
-            // authenticate this new user
-            val serverAuthToken: String = credentials.password
-            val (tokenResponse, idToken) = makeGoogleAuthRequest(serverAuthToken).await()
+): Principal? = when {
+    mmSession == null -> {
+        // authenticate this new user
+        val serverAuthToken: String = credentials.password
+        val (tokenResponse, idToken) = makeGoogleAuthRequest(serverAuthToken).await()
 
-            // create principal and session
-            val expireMillis = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(tokenResponse.expiresInSeconds)
-            this.mmSession = try {
-                MmSession(
-                        expireAt = expireMillis,
-                        accessToken = tokenResponse.accessToken,
-                        email = idToken.payload.email,
-                        subject = idToken.payload.subject,
-                        count = 0
-                ).also {
-                    logger.debug("Authentication Successful. Subject: ${it.subject}; Email: ${it.email}")
-                }
-            } catch (e: NullPointerException) {
-                throw GoogleTokenException("Invalid Google ID token; missing some information (e.g. email)?")
+        // create principal and session
+        val expireMillis = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(tokenResponse.expiresInSeconds)
+        mmSession = try {
+            MmSession(
+                    expireAt = expireMillis,
+                    accessToken = tokenResponse.accessToken,
+                    refreshToken = tokenResponse.refreshToken,
+                    email = idToken.payload.email,
+                    subject = idToken.payload.subject,
+                    count = 0
+            ).also {
+                val sessionInfo = """
+                    Authentication Successful.
+                    ${it.debugInfo}
+                """.trimIndent()
+                logger.debug(sessionInfo)
             }
-            UserIdPrincipal(idToken.payload.subject)
+        } catch (e: NullPointerException) {
+            throw GoogleTokenException("Invalid Google ID token; missing some information (e.g. email)?")
         }
-        oldSession.isExpired -> {
-            TODO("Use Refresh token to get new access token")
-        }
-        else -> {
-            // Nothing wrong with this token
-            UserIdPrincipal(oldSession.subject)
-        }
+        UserIdPrincipal(idToken.payload.subject)
+    }
+    mmSession!!.isExpired -> {
+        TODO("Use Refresh token to get new access token")
+    }
+    else -> {
+        // Nothing wrong with this token
+        UserIdPrincipal(mmSession!!.subject)
     }
 }
 
