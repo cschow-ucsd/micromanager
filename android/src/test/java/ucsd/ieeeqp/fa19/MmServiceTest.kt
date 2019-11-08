@@ -9,7 +9,7 @@ class MmServiceTest {
     @Test
     fun testRepeatedApiCalls() = runBlocking {
         // insert server auth token
-        val serverAuthToken = "4/tAH3kIr0sDTdZZ5LAJMLweGjPArQK0bwl_0qDBnzz7jaHY2ZN2kitob12vkIhqN1eh66Q2GhE3tHX756_1aoLVs"
+        val serverAuthToken = ""
 
         val service = MmService(serverAuthToken)
         val responses = mutableListOf<String>()
