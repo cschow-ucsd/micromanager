@@ -1,6 +1,6 @@
 package api
 
-sealed class MmException(
+sealed class MmAuthException(
         message: String
 ) : RuntimeException(message) {
     open val jsonMessage: Map<String, Any?>
@@ -9,12 +9,12 @@ sealed class MmException(
 
 class ServerAuthTokenException(
         message: String
-) : MmException(message)
+) : MmAuthException(message)
 
 class GoogleTokenException(
         message: String
-) : MmException(message)
+) : MmAuthException(message)
 
 class NoSessionException(
         message: String
-): MmException(message)
+): MmAuthException(message)

@@ -9,7 +9,7 @@ import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
-import util.mmSession
+import util.mmSessionData
 
 @KtorExperimentalAPI
 fun Route.mmPublicApi() {
@@ -37,6 +37,5 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
 }
 
 private fun ApplicationCall.handleSession() {
-    if (mmSession == null) throw NoSessionException("Missing session!")
-    mmSession = mmSession!!.copy(count = mmSession!!.count + 1)
+    if (mmSessionData == null) throw NoSessionException("Missing session!")
 }

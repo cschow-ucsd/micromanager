@@ -23,6 +23,9 @@ dependencies {
     implementation "io.ktor:ktor-client-auth-jvm:$ktor_version"
     implementation "io.ktor:ktor-auth-jwt:$ktor_version"
 
+    // database
+    compile 'org.jetbrains.exposed:exposed:0.17.7'
+
     // scheduling library
     implementation 'org.optaplanner:optaplanner-core:7.28.0.Final'
 

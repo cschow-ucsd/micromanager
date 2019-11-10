@@ -3,10 +3,8 @@ package ucsd.ieeeqp.fa19;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -15,7 +13,6 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.Task;
 import ucsd.ieeeqp.fa19.model.GoogleSignInViewModel;
 import ucsd.ieeeqp.fa19.model.MmServiceViewModel;
-import ucsd.ieeeqp.fa19.service.TestResponse;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -37,36 +34,25 @@ public class MainActivity extends AppCompatActivity {
         // Set the dimensions of the sign-in button.
         SignInButton signInButton = findViewById(R.id.button_main_signin);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
-        findViewById(R.id.button_main_signin).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signIn(gsiViewModel.getClient());
-            }
-        });
+        findViewById(R.id.button_main_signin).setOnClickListener(v -> signIn(gsiViewModel.getClient()));
     }
 
     private void setupViewModelObservers() {
-        gsiViewModel.getAccountIsValidLiveData().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean isValid) {
-                if (isValid) {
-                    String serverAuthToken = gsiViewModel.getAccountLiveData().getValue().getServerAuthCode();
-                    if (serverAuthToken != null) {
-                        mmViewModel.initService(serverAuthToken);
-                        mmViewModel.fetchProtectedDataAsync();
-                    }
+        gsiViewModel.getAccountIsValidLiveData().observe(this, isValid -> {
+            if (isValid) {
+                String serverAuthToken = gsiViewModel.getAccountLiveData().getValue().getServerAuthCode();
+                if (serverAuthToken != null) {
+                    mmViewModel.initService(serverAuthToken);
+                    mmViewModel.fetchProtectedDataAsync();
                 }
-                // TODO: If not valid then need to show the user
             }
+            // TODO: If not valid then need to show the user
         });
-        mmViewModel.getProtectedLiveData().observe(this, new Observer<TestResponse>() {
-            @Override
-            public void onChanged(TestResponse testResponse) {
-                if (testResponse != null) {
-                    Log.d(TAG, "onChanged: " + testResponse.getBody()); //should return "It's protected!"
-                }
-                // TODO: show protected data on screen
+        mmViewModel.getProtectedLiveData().observe(this, testResponse -> {
+            if (testResponse != null) {
+                Log.d(TAG, "onChanged: " + testResponse.getBody()); //should return "It's protected!"
             }
+            // TODO: show protected data on screen
         });
     }
 

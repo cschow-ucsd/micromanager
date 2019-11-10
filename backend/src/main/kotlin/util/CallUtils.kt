@@ -1,15 +1,19 @@
 package util
 
-import api.MmSession
 import io.ktor.application.ApplicationCall
+import io.ktor.sessions.clear
 import io.ktor.sessions.get
 import io.ktor.sessions.sessions
 import io.ktor.sessions.set
 import org.slf4j.Logger
+import sessions.MmSessionData
 
 val ApplicationCall.logger: Logger
     get() = application.environment.log
 
-var ApplicationCall.mmSession: MmSession?
+var ApplicationCall.mmSessionData: MmSessionData?
     get() = sessions.get()
-    set(value) = sessions.set(value)
+    set(value) {
+        sessions.clear<MmSessionData>()
+        sessions.set(value)
+    }
