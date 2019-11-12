@@ -15,3 +15,6 @@ local.properties
 
 # Ignore API Keys
 *.env
+
+# Ignore session and database files
+**/data/

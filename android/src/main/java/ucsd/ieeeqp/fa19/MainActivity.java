@@ -1,22 +1,15 @@
 package ucsd.ieeeqp.fa19;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.tasks.Task;
 import ucsd.ieeeqp.fa19.model.GoogleSignInViewModel;
 import ucsd.ieeeqp.fa19.model.MmServiceViewModel;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int RC_SIGN_IN = 3027;
 
     private GoogleSignInViewModel gsiViewModel;
     private MmServiceViewModel mmViewModel;
@@ -29,65 +22,56 @@ public class MainActivity extends AppCompatActivity {
         // view model setup
         gsiViewModel = ViewModelProviders.of(this).get(GoogleSignInViewModel.class);
         mmViewModel = ViewModelProviders.of(this).get(MmServiceViewModel.class);
-        setupViewModelObservers();
-
-        // Set the dimensions of the sign-in button.
-        SignInButton signInButton = findViewById(R.id.button_main_signin);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-        findViewById(R.id.button_main_signin).setOnClickListener(v -> signIn(gsiViewModel.getClient()));
+        gsiViewModel.getGoogleLoginStateLiveData().observe(this, this::handleGoogleAccountStateChange);
+        mmViewModel.getMmLoginStateLiveData().observe(this, this::handleMmStateChange);
     }
 
-    private void setupViewModelObservers() {
-        gsiViewModel.getAccountIsValidLiveData().observe(this, isValid -> {
-            if (isValid) {
-                String serverAuthToken = gsiViewModel.getAccountLiveData().getValue().getServerAuthCode();
-                if (serverAuthToken != null) {
-                    mmViewModel.initService(serverAuthToken);
-                    mmViewModel.fetchProtectedDataAsync();
-                }
-            }
-            // TODO: If not valid then need to show the user
-        });
-        mmViewModel.getProtectedLiveData().observe(this, testResponse -> {
-            if (testResponse != null) {
-                Log.d(TAG, "onChanged: " + testResponse.getBody()); //should return "It's protected!"
-            }
-            // TODO: show protected data on screen
-        });
+    private void handleGoogleAccountStateChange(int googleStateCode) {
+        switch (googleStateCode) {
+            case GoogleSignInViewModel.ACCOUNT_FINDING:
+                // Do nothing here because it is covered by handleMmStateChange
+                Log.d(TAG, "handleGoogleAccountStateChange: Finding Google account...");
+                break;
+            case GoogleSignInViewModel.ACCOUNT_FOUND:
+                mmViewModel.initService(gsiViewModel.getAccount().getServerAuthCode());
+                mmViewModel.loginToApi();
+                break;
+            case GoogleSignInViewModel.ACCOUNT_NOT_FOUND:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.framelayout_main_container, new LoginFragment())
+                        .commit();
+                break;
+            case GoogleSignInViewModel.ACCOUNT_LOGIN_FAILED:
+                Toast.makeText(this, "Google sign in failed.", Toast.LENGTH_SHORT).show();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.framelayout_main_container, new LoginFragment())
+                        .commit();
+        }
+    }
+
+    private void handleMmStateChange(int mmStateCode) {
+        switch (mmStateCode) {
+            case MmServiceViewModel.NOT_LOGGED_IN:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.framelayout_main_container, new LoadingFragment())
+                        .commit();
+                break;
+            case MmServiceViewModel.LOGIN_SUCCESS:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.framelayout_main_container, new NavigationFragment())
+                        .commit();
+                break;
+            case MmServiceViewModel.LOGIN_FAILED:
+                Toast.makeText(this, "Something went wrong.", Toast.LENGTH_SHORT).show();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.framelayout_main_container, new LoginFragment())
+                        .commit();
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (gsiViewModel != null) {
-            gsiViewModel.findExistingAccount();
-        }
-    }
-
-    private void updateUI(final GoogleSignInAccount account) {
-        // TODO: update UI after verified login with backend
-        if (account == null) {
-            Toast.makeText(this, "No account", Toast.LENGTH_SHORT).show();
-        } else if (account.getIdToken() == null) {
-            Toast.makeText(this, "No token", Toast.LENGTH_SHORT).show();
-        } else {
-            // TODO: update UI
-        }
-        //launch new activity
-    }
-
-    private void signIn(GoogleSignInClient client) {
-        Intent signInIntent = client.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            gsiViewModel.handleSignInResult(task);
-        }
+        gsiViewModel.findExistingAccount();
     }
 }

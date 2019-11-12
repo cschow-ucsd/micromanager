@@ -18,19 +18,18 @@ import ucsd.ieeeqp.fa19.R;
 public class GoogleSignInViewModel extends AndroidViewModel {
 
     private static final String TAG = GoogleSignInViewModel.class.getSimpleName();
+    public static final int ACCOUNT_FINDING = 1000, ACCOUNT_NOT_FOUND = 1001, ACCOUNT_FOUND = 1002, ACCOUNT_LOGIN_FAILED = 1003;
 
-    private MutableLiveData<Boolean> accountIsValidLiveData = new MutableLiveData<>(false);
-    private MutableLiveData<GoogleSignInAccount> accountLiveData = new MutableLiveData<>(null);
+    private MutableLiveData<Integer> googleLoginStateLiveData = new MutableLiveData<>(ACCOUNT_FINDING);
+    private GoogleSignInAccount account;
 
-    private final GoogleSignInOptions gso;
     private final GoogleSignInClient client;
 
     public GoogleSignInViewModel(@NonNull Application application) {
         super(application);
 
         // sign in configuration
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(application.getString(R.string.oauth_client_id))
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestServerAuthCode(application.getString(R.string.oauth_client_id))
                 .requestEmail()
                 .requestScopes(new Scope("https://www.googleapis.com/auth/calendar"))
@@ -41,35 +40,35 @@ public class GoogleSignInViewModel extends AndroidViewModel {
     public void findExistingAccount() {
         GoogleSignInAccount existingAccount = GoogleSignIn.getLastSignedInAccount(getApplication());
         if (existingAccount != null) {
-            accountLiveData.setValue(existingAccount);
-            accountIsValidLiveData.setValue(true);
+            account = existingAccount;
+            googleLoginStateLiveData.postValue(ACCOUNT_FOUND);
+        } else {
+            googleLoginStateLiveData.postValue(ACCOUNT_NOT_FOUND);
         }
     }
 
     public void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount newSignInAccount = completedTask.getResult(ApiException.class);
-            accountLiveData.setValue(newSignInAccount);
-            accountIsValidLiveData.setValue(true);
-            Log.d(TAG, "handleSignInResult: Sign in successful. Server auth token: " + newSignInAccount.getServerAuthCode());
-            Log.d(TAG, "handleSignInResult: Sign in successful. Server auth token: " + newSignInAccount.getIdToken());
+            if (newSignInAccount != null) {
+                account = newSignInAccount;
+                googleLoginStateLiveData.postValue(ACCOUNT_FOUND);
+                Log.d(TAG, "handleSignInResult: Sign in successful. Server auth token: " + newSignInAccount.getServerAuthCode());
+            } else {
+                googleLoginStateLiveData.postValue(ACCOUNT_LOGIN_FAILED);
+            }
         } catch (ApiException e) {
-            accountIsValidLiveData.setValue(false);
-            accountLiveData.setValue(null);
+            googleLoginStateLiveData.postValue(ACCOUNT_LOGIN_FAILED);
             Log.d(TAG, "handleSignInResult: Sign in failed.");
         }
     }
 
-    public LiveData<Boolean> getAccountIsValidLiveData() {
-        return accountIsValidLiveData;
+    public LiveData<Integer> getGoogleLoginStateLiveData() {
+        return googleLoginStateLiveData;
     }
 
-    public LiveData<GoogleSignInAccount> getAccountLiveData() {
-        return accountLiveData;
-    }
-
-    public GoogleSignInOptions getGso() {
-        return gso;
+    public GoogleSignInAccount getAccount() {
+        return account;
     }
 
     public GoogleSignInClient getClient() {

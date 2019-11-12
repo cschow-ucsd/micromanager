@@ -1,22 +1,42 @@
 package ucsd.ieeeqp.fa19.model;
 
+import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import kotlin.Unit;
 import kotlinx.coroutines.future.FutureKt;
+import ucsd.ieeeqp.fa19.service.MmHttpClient;
 import ucsd.ieeeqp.fa19.service.MmService;
-import ucsd.ieeeqp.fa19.service.TestResponse;
 
 import java.util.concurrent.CompletableFuture;
 
-public class MmServiceViewModel extends ViewModel {
+public class MmServiceViewModel extends AndroidViewModel {
+    public static final int NOT_LOGGED_IN = 1000, LOGIN_FAILED = 1001, LOGIN_SUCCESS = 1002;
+
     private MmService mmService;
+    private MutableLiveData<Integer> mmLoginStateLiveData = new MutableLiveData<>(NOT_LOGGED_IN);
 
-    private MutableLiveData<TestResponse> protectedLiveData = new MutableLiveData<>(null);
+    // store previous sessions with the server
+    private SharedPreferences preferences;
 
-    public void initService(String serverAuthToken) {
+    public MmServiceViewModel(@NonNull Application application) {
+        super(application);
+        preferences = application.getSharedPreferences(application.getPackageName(), Context.MODE_PRIVATE);
+    }
+
+    public void initService(String serverAuthCode) {
         invalidateService();
-        mmService = new MmService(serverAuthToken);
+        String lastSessionAuthHeader = preferences.getString(MmHttpClient.MICROMANAGER_SESSION, null);
+        mmService = new MmService(serverAuthCode, lastSessionAuthHeader, header -> {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(MmHttpClient.MICROMANAGER_SESSION, header);
+            editor.apply();
+            return Unit.INSTANCE;
+        });
     }
 
     public void invalidateService() {
@@ -26,20 +46,22 @@ public class MmServiceViewModel extends ViewModel {
         }
     }
 
-    public void fetchProtectedDataAsync() {
-        CompletableFuture<String> future = FutureKt.asCompletableFuture(mmService.getProtectedAsync());
-        future.handleAsync((result, exception) -> {
+    public void loginToApi() {
+        CompletableFuture<Boolean> loginFuture = FutureKt.asCompletableFuture(mmService.loginAsync());
+        loginFuture.handleAsync((result, exception) -> {
             if (exception != null) {
-                protectedLiveData.postValue(new TestResponse(false, null));
+                mmLoginStateLiveData.postValue(LOGIN_FAILED);
+            } else if (result) {
+                mmLoginStateLiveData.postValue(LOGIN_SUCCESS);
             } else {
-                protectedLiveData.postValue(new TestResponse(true, result));
+                mmLoginStateLiveData.postValue(LOGIN_FAILED);
             }
             return null;
         });
     }
 
-    public LiveData<TestResponse> getProtectedLiveData() {
-        return protectedLiveData;
+    public LiveData<Integer> getMmLoginStateLiveData() {
+        return mmLoginStateLiveData;
     }
 
     @Override
