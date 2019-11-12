@@ -20,7 +20,7 @@ class MmService(
     }
 
     fun loginAsync(): Deferred<Boolean> = client.async {
-        client.get<Boolean>(route("api/login"))
+        client.get<Boolean>(route("/api/login"))
     }
 
     private fun route(
