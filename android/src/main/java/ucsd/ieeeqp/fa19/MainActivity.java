@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.framelayout_main_container, new LoginFragment())
                         .commit();
+                break;
         }
     }
 
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.framelayout_main_container, new LoginFragment())
                         .commit();
+                break;
         }
     }
 
