@@ -8,13 +8,13 @@ import io.ktor.features.StatusPages
 import io.ktor.gson.gson
 import io.ktor.sessions.SessionTransportTransformerMessageAuthentication
 import io.ktor.sessions.Sessions
+import io.ktor.sessions.directorySessionStorage
 import io.ktor.sessions.header
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.hex
-import sessions.MmSessionData
-import sessions.MmSessionStorage
 import util.BACKEND_TRANSFORMER_HEX
 import util.mmDotenv
+import java.io.File
 
 @KtorExperimentalAPI
 fun Application.installFeatures() {
@@ -25,7 +25,10 @@ fun Application.installFeatures() {
         }
     }
     install(Sessions) {
-        header<MmSessionData>("MICROMANAGER_SESSION", MmSessionStorage()) {
+        header<MmSession>(
+                name = "MICROMANAGER_SESSION",
+                storage = directorySessionStorage(File("data/.sessions"))
+        ) {
             val hex = hex(mmDotenv.BACKEND_TRANSFORMER_HEX)
             transform(SessionTransportTransformerMessageAuthentication(hex))
         }

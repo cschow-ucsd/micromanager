@@ -1,17 +1,17 @@
-package sessions
+package api
 
 /**
  * Custom session identifier.
  * Determines if a user has logged in.
  */
-data class MmSessionData(
+data class MmSession(
         val subject: String,
         val expireAt: Long,
         val accessToken: String
 )
 
-val MmSessionData.isExpired: Boolean
+val MmSession.isExpired: Boolean
     get() = System.currentTimeMillis() > expireAt
 
-val MmSessionData.debugInfo: String
+val MmSession.debugInfo: String
     get() = "Subject: $subject; Expired: $isExpired"

@@ -11,7 +11,6 @@ import io.ktor.client.response.HttpResponse
 import io.ktor.client.response.readText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
 import util.CLIENT_SERVER_AUTH_TOKEN_TEST
 import util.testMmDotenv
@@ -55,6 +54,5 @@ class ApiCallTest {
         println("Headers: ${response.headers}")
         println(response.headers["MICROMANAGER_SESSION"])
         println("Text: ${response.readText()}")
-        val deferred: Deferred<String>
     }
 }

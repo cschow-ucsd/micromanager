@@ -10,9 +10,6 @@ import exposed.dao.MmUser
 import io.ktor.application.ApplicationCall
 import io.ktor.auth.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import sessions.MmSessionData
-import sessions.debugInfo
-import sessions.isExpired
 import util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
@@ -34,9 +31,9 @@ fun Authentication.Configuration.mmOAuthConfiguration() {
     basic(MmAuthenticate.API_AUTH) {
         // skip if session exists
         skipWhen {
-            if (it.mmSessionData == null) return@skipWhen false
-            it.logger.debug("Found existing session. ${it.mmSessionData!!.debugInfo}")
-            return@skipWhen !it.mmSessionData!!.isExpired
+            if (it.mmSession == null) return@skipWhen false
+            it.logger.debug("Found existing session. ${it.mmSession!!.debugInfo}")
+            return@skipWhen !it.mmSession!!.isExpired
         }
 
         realm = "Ktor Server"
@@ -47,7 +44,7 @@ fun Authentication.Configuration.mmOAuthConfiguration() {
 private suspend fun ApplicationCall.basicValidation(
         credentials: UserPasswordCredential
 ): Principal? = when {
-    mmSessionData == null -> {
+    mmSession == null -> {
         // authenticate this new user
         val serverAuthToken: String = credentials.password
         val (tokenResponse, idToken) = makeGoogleAuthRequest(serverAuthToken).await()
@@ -58,15 +55,15 @@ private suspend fun ApplicationCall.basicValidation(
         createSession(tokenResponse, idToken)
         UserIdPrincipal(idToken.payload.subject)
     }
-    mmSessionData!!.isExpired -> {
-        val existingUser = transaction { MmUser[mmSessionData!!.subject] }
+    mmSession!!.isExpired -> {
+        val existingUser = transaction { MmUser[mmSession!!.subject] }
         val (tokenResponse, idToken) = makeGoogleAuthRequest(existingUser.refreshToken).await()
         createSession(tokenResponse, idToken)
         UserIdPrincipal(idToken.payload.subject)
     }
     else -> {
         // Nothing wrong with this token
-        UserIdPrincipal(mmSessionData!!.subject)
+        UserIdPrincipal(mmSession!!.subject)
     }
 }
 
@@ -85,12 +82,12 @@ private fun ApplicationCall.createSession(
         idToken: GoogleIdToken
 ) {
     val existingUser = transaction { MmUser[idToken.payload.subject] }
-    mmSessionData = MmSessionData(
+    mmSession = MmSession(
             subject = existingUser.id.value,
             expireAt = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(tokenResponse.expiresInSeconds),
             accessToken = tokenResponse.accessToken
     )
-    logger.debug("Authentication successful. Subject: ${mmSessionData!!.subject}")
+    logger.debug("Authentication successful. Subject: ${mmSession!!.subject}")
 }
 
 /**
