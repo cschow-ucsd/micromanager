@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import ucsd.ieeeqp.fa19.viewmodel.GoogleSignInViewModel;
 import ucsd.ieeeqp.fa19.viewmodel.MmServiceViewModel;
@@ -51,23 +52,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleMmStateChange(int mmStateCode) {
+        Fragment fragment = null;
         switch (mmStateCode) {
             case MmServiceViewModel.NOT_LOGGED_IN:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.framelayout_main_container, new LoadingFragment())
-                        .commit();
+                fragment = new LoadingFragment();
                 break;
             case MmServiceViewModel.LOGIN_SUCCESS:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.framelayout_main_container, new NavigationFragment())
-                        .commit();
+                fragment = new NavigationFragment();
                 break;
             case MmServiceViewModel.LOGIN_FAILED:
                 Toast.makeText(this, "Something went wrong.", Toast.LENGTH_SHORT).show();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.framelayout_main_container, new LoginFragment())
-                        .commit();
+                fragment = new LoginFragment();
                 break;
+        }
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.framelayout_main_container, fragment)
+                    .commit();
         }
     }
 
