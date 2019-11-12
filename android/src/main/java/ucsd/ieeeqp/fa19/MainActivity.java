@@ -6,6 +6,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import ucsd.ieeeqp.fa19.ui.login.LoadingFragment;
+import ucsd.ieeeqp.fa19.ui.login.LoginFragment;
+import ucsd.ieeeqp.fa19.ui.login.NavigationFragment;
 import ucsd.ieeeqp.fa19.viewmodel.GoogleSignInViewModel;
 import ucsd.ieeeqp.fa19.viewmodel.MmServiceViewModel;
 
@@ -20,14 +23,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // view model setup
-        gsiViewModel = ViewModelProviders.of(this).get(GoogleSignInViewModel.class);
-        mmViewModel = ViewModelProviders.of(this).get(MmServiceViewModel.class);
-        gsiViewModel.getGoogleLoginStateLiveData().observe(this, this::handleGoogleAccountStateChange);
-        mmViewModel.getMmLoginStateLiveData().observe(this, this::handleMmStateChange);
+        if (savedInstanceState == null) {
+            // view model setup
+            gsiViewModel = ViewModelProviders.of(this).get(GoogleSignInViewModel.class);
+            mmViewModel = ViewModelProviders.of(this).get(MmServiceViewModel.class);
+            gsiViewModel.getGoogleLoginStateLiveData().observe(this, this::handleGoogleAccountStateChange);
+            mmViewModel.getMmLoginStateLiveData().observe(this, this::handleMmStateChange);
 
-        // find existing account
-        gsiViewModel.findExistingAccount();
+            // find existing account
+            gsiViewModel.findExistingAccount();
+        }
     }
 
     private void handleGoogleAccountStateChange(int googleStateCode) {
@@ -40,6 +45,12 @@ public class MainActivity extends AppCompatActivity {
                 mmViewModel.initService(gsiViewModel.getAccount().getServerAuthCode());
                 mmViewModel.loginToApi();
                 break;
+            case GoogleSignInViewModel.ACCOUNT_LOGIN_SUCCESS:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.framelayout_main_container, new LoadingFragment())
+                        .commit();
+                mmViewModel.initService(gsiViewModel.getAccount().getServerAuthCode());
+                mmViewModel.loginToApi();
             case GoogleSignInViewModel.ACCOUNT_NOT_FOUND:
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.framelayout_main_container, new LoginFragment())
@@ -58,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment = null;
         switch (mmStateCode) {
             case MmServiceViewModel.NOT_LOGGED_IN:
-            case MmServiceViewModel.LOGGING_IN:
                 fragment = new LoadingFragment();
                 break;
             case MmServiceViewModel.LOGIN_SUCCESS:

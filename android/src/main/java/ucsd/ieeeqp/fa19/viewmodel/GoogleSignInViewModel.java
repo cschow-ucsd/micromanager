@@ -18,7 +18,7 @@ import ucsd.ieeeqp.fa19.R;
 public class GoogleSignInViewModel extends AndroidViewModel {
 
     private static final String TAG = GoogleSignInViewModel.class.getSimpleName();
-    public static final int ACCOUNT_FINDING = 1000, ACCOUNT_NOT_FOUND = 1001, ACCOUNT_FOUND = 1002, ACCOUNT_LOGIN_FAILED = 1003;
+    public static final int ACCOUNT_FINDING = 1000, ACCOUNT_NOT_FOUND = 1001, ACCOUNT_FOUND = 1002, ACCOUNT_LOGIN_SUCCESS = 1003, ACCOUNT_LOGIN_FAILED = 1004;
 
     private MutableLiveData<Integer> googleLoginStateLiveData = new MutableLiveData<>(ACCOUNT_FINDING);
     private GoogleSignInAccount account;
@@ -52,7 +52,7 @@ public class GoogleSignInViewModel extends AndroidViewModel {
             GoogleSignInAccount newSignInAccount = completedTask.getResult(ApiException.class);
             if (newSignInAccount != null) {
                 account = newSignInAccount;
-                googleLoginStateLiveData.postValue(ACCOUNT_FOUND);
+                googleLoginStateLiveData.postValue(ACCOUNT_LOGIN_SUCCESS);
                 Log.d(TAG, "handleSignInResult: Sign in successful. Server auth token: " + newSignInAccount.getServerAuthCode());
             } else {
                 googleLoginStateLiveData.postValue(ACCOUNT_LOGIN_FAILED);

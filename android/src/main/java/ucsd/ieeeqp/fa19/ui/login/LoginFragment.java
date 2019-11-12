@@ -1,4 +1,4 @@
-package ucsd.ieeeqp.fa19;
+package ucsd.ieeeqp.fa19.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +13,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.Task;
+import ucsd.ieeeqp.fa19.R;
 import ucsd.ieeeqp.fa19.viewmodel.GoogleSignInViewModel;
 
 public class LoginFragment extends Fragment {

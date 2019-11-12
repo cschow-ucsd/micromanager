@@ -1,4 +1,4 @@
-package ucsd.ieeeqp.fa19;
+package ucsd.ieeeqp.fa19.ui.login;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import ucsd.ieeeqp.fa19.R;
 
 public class LoadingFragment extends Fragment {
     @Nullable
