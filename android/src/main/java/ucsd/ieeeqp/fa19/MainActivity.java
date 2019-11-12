@@ -25,6 +25,9 @@ public class MainActivity extends AppCompatActivity {
         mmViewModel = ViewModelProviders.of(this).get(MmServiceViewModel.class);
         gsiViewModel.getGoogleLoginStateLiveData().observe(this, this::handleGoogleAccountStateChange);
         mmViewModel.getMmLoginStateLiveData().observe(this, this::handleMmStateChange);
+
+        // find existing account
+        gsiViewModel.findExistingAccount();
     }
 
     private void handleGoogleAccountStateChange(int googleStateCode) {
@@ -55,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment = null;
         switch (mmStateCode) {
             case MmServiceViewModel.NOT_LOGGED_IN:
+            case MmServiceViewModel.LOGGING_IN:
                 fragment = new LoadingFragment();
                 break;
             case MmServiceViewModel.LOGIN_SUCCESS:
@@ -70,11 +74,5 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.framelayout_main_container, fragment)
                     .commit();
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        gsiViewModel.findExistingAccount();
     }
 }

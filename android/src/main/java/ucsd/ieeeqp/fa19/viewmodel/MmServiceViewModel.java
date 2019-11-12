@@ -11,7 +11,7 @@ import ucsd.ieeeqp.fa19.service.MmService;
 import java.util.concurrent.CompletableFuture;
 
 public class MmServiceViewModel extends AndroidViewModel {
-    public static final int NOT_LOGGED_IN = 1000, LOGIN_FAILED = 1001, LOGIN_SUCCESS = 1002;
+    public static final int NOT_LOGGED_IN = 1000, LOGGING_IN = 1001, LOGIN_FAILED = 1002, LOGIN_SUCCESS = 1003;
 
     private MmService mmService;
     private MutableLiveData<Integer> mmLoginStateLiveData = new MutableLiveData<>(NOT_LOGGED_IN);
@@ -33,6 +33,7 @@ public class MmServiceViewModel extends AndroidViewModel {
     }
 
     public void loginToApi() {
+        mmLoginStateLiveData.postValue(LOGGING_IN);
         CompletableFuture<Boolean> loginFuture = FutureKt.asCompletableFuture(mmService.loginAsync());
         loginFuture.handleAsync((result, exception) -> {
             if (exception != null) {
