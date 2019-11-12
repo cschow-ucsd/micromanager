@@ -8,7 +8,7 @@ import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.HttpRequestPipeline
 import io.ktor.client.request.header
-import io.ktor.client.response.HttpResponsePipeline
+import io.ktor.client.response.HttpReceivePipeline
 
 object MmHttpClient {
     const val BASE_URL = "http://localhost:8080"
@@ -37,7 +37,7 @@ object MmHttpClient {
         client.requestPipeline.intercept(HttpRequestPipeline.Before) {
             if (sessionHeader != null) context.header(MICROMANAGER_SESSION, sessionHeader)
         }
-        client.responsePipeline.intercept(HttpResponsePipeline.After) {
+        client.receivePipeline.intercept(HttpReceivePipeline.After) {
             val newSessionHeader = context.response.headers[MICROMANAGER_SESSION]
             if (newSessionHeader != null) {
                 sessionHeader = newSessionHeader

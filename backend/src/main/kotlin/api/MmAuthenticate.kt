@@ -31,7 +31,10 @@ fun Authentication.Configuration.mmOAuthConfiguration() {
     basic(MmAuthenticate.API_AUTH) {
         // skip if session exists
         skipWhen {
-            if (it.mmSession == null) return@skipWhen false
+            if (it.mmSession == null) {
+                it.logger.debug("Null session, cannot skip.")
+                return@skipWhen false
+            }
             it.logger.debug("Found existing session. ${it.mmSession!!.debugInfo}")
             return@skipWhen !it.mmSession!!.isExpired
         }
@@ -44,36 +47,46 @@ fun Authentication.Configuration.mmOAuthConfiguration() {
 private suspend fun ApplicationCall.basicValidation(
         credentials: UserPasswordCredential
 ): Principal? = when {
-    mmSession == null -> {
-        // authenticate this new user
-        val serverAuthToken: String = credentials.password
-        val (tokenResponse, idToken) = makeGoogleAuthRequest(serverAuthToken).await()
-
-        if (tokenResponse.refreshToken != null) {
-            createNewUser(tokenResponse, idToken)
-        }
-        createSession(tokenResponse, idToken)
-        UserIdPrincipal(idToken.payload.subject)
-    }
+    mmSession == null -> authWithServerAuthCode(credentials)
     mmSession!!.isExpired -> {
         val existingUser = transaction { MmUser[mmSession!!.subject] }
-        val (tokenResponse, idToken) = makeGoogleAuthRequest(existingUser.refreshToken).await()
-        createSession(tokenResponse, idToken)
-        UserIdPrincipal(idToken.payload.subject)
+        if (existingUser.refreshToken != null) {
+            val (tokenResponse, idToken) = makeGoogleAuthRequest(existingUser.refreshToken!!).await()
+            createSession(tokenResponse, idToken)
+            UserIdPrincipal(idToken.payload.subject)
+        } else {
+            authWithServerAuthCode(credentials)
+        }
     }
-    else -> {
-        // Nothing wrong with this token
-        UserIdPrincipal(mmSession!!.subject)
-    }
+    else -> UserIdPrincipal(mmSession!!.subject) // Nothing wrong with this token
 }
 
-private fun createNewUser(
+private suspend fun ApplicationCall.authWithServerAuthCode(
+        credentials: UserPasswordCredential
+): UserIdPrincipal {
+    val serverAuthToken: String = credentials.password
+    val (tokenResponse, idToken) = makeGoogleAuthRequest(serverAuthToken).await()
+
+    val existingUser = transaction { MmUser.findById(idToken.payload.subject) }
+    if (existingUser == null) {
+        createNewUser(tokenResponse, idToken)
+    }
+    createSession(tokenResponse, idToken)
+    return UserIdPrincipal(idToken.payload.subject)
+}
+
+private fun ApplicationCall.createNewUser(
         tokenResponse: GoogleTokenResponse,
         idToken: GoogleIdToken
-): Unit = transaction {
-    MmUser.new(idToken.payload.subject) {
-        email = idToken.payload.email
-        refreshToken = tokenResponse.refreshToken
+) {
+    if (tokenResponse.refreshToken == null) {
+        logger.debug("WARNING: No refresh token found for new user. Server auth code must be supplied every time.")
+    }
+    transaction {
+        MmUser.new(idToken.payload.subject) {
+            email = idToken.payload.email
+            refreshToken = tokenResponse.refreshToken
+        }
     }
 }
 
@@ -104,6 +117,7 @@ private fun makeGoogleAuthRequest(
         authCode,
         "" // no redirect URL needed
 )
+
 
 private suspend fun GoogleAuthorizationCodeTokenRequest.await(
 ): Pair<GoogleTokenResponse, GoogleIdToken> = suspendCoroutine { continuation ->

@@ -1,4 +1,4 @@
-package ucsd.ieeeqp.fa19.model;
+package ucsd.ieeeqp.fa19.viewmodel;
 
 import android.app.Application;
 import android.util.Log;

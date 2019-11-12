@@ -1,15 +1,11 @@
-package ucsd.ieeeqp.fa19.model;
+package ucsd.ieeeqp.fa19.viewmodel;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import kotlin.Unit;
 import kotlinx.coroutines.future.FutureKt;
-import ucsd.ieeeqp.fa19.service.MmHttpClient;
 import ucsd.ieeeqp.fa19.service.MmService;
 
 import java.util.concurrent.CompletableFuture;
@@ -20,23 +16,13 @@ public class MmServiceViewModel extends AndroidViewModel {
     private MmService mmService;
     private MutableLiveData<Integer> mmLoginStateLiveData = new MutableLiveData<>(NOT_LOGGED_IN);
 
-    // store previous sessions with the server
-    private SharedPreferences preferences;
-
     public MmServiceViewModel(@NonNull Application application) {
         super(application);
-        preferences = application.getSharedPreferences(application.getPackageName(), Context.MODE_PRIVATE);
     }
 
     public void initService(String serverAuthCode) {
         invalidateService();
-        String lastSessionAuthHeader = preferences.getString(MmHttpClient.MICROMANAGER_SESSION, null);
-        mmService = new MmService(serverAuthCode, lastSessionAuthHeader, header -> {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(MmHttpClient.MICROMANAGER_SESSION, header);
-            editor.apply();
-            return Unit.INSTANCE;
-        });
+        mmService = new MmService(getApplication(), serverAuthCode);
     }
 
     public void invalidateService() {

@@ -3,23 +3,20 @@ package api
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
-import io.ktor.auth.basicAuthenticationCredentials
+import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
+import io.ktor.response.respondText
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
 import util.mmSession
 
+
 @KtorExperimentalAPI
 fun Route.mmPublicApi() {
     get("/") {
-        call.respond("Hello World!")
-    }
-    get("/echotoken") {
-        val token: String? = call.request.basicAuthenticationCredentials()?.password
-        call.application.environment.log.debug("echotoken: $token")
-        call.respond(token ?: "")
+        call.respondText("Hello World!")
     }
 }
 
@@ -29,6 +26,9 @@ fun Route.mmPublicApi() {
  */
 fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
     route("/api") {
+        get("/login") {
+            call.respond(HttpStatusCode.OK)
+        }
         get("/protected") {
             call.handleSession()
             call.respond("It's protected!")

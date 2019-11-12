@@ -5,8 +5,8 @@ import android.util.Log;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
-import ucsd.ieeeqp.fa19.model.GoogleSignInViewModel;
-import ucsd.ieeeqp.fa19.model.MmServiceViewModel;
+import ucsd.ieeeqp.fa19.viewmodel.GoogleSignInViewModel;
+import ucsd.ieeeqp.fa19.viewmodel.MmServiceViewModel;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();

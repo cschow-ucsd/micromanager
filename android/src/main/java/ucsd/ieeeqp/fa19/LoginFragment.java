@@ -13,7 +13,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.Task;
-import ucsd.ieeeqp.fa19.model.GoogleSignInViewModel;
+import ucsd.ieeeqp.fa19.viewmodel.GoogleSignInViewModel;
 
 public class LoginFragment extends Fragment {
     private static final int RC_GOOGLE_SIGN_IN = 3027;
@@ -23,7 +23,7 @@ public class LoginFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        gsiViewModel = ViewModelProviders.of(this).get(GoogleSignInViewModel.class);
+        gsiViewModel = ViewModelProviders.of(getActivity()).get(GoogleSignInViewModel.class);
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
@@ -40,7 +40,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RC_GOOGLE_SIGN_IN) {
+        if (requestCode == RC_GOOGLE_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             gsiViewModel.handleSignInResult(task);
         }
