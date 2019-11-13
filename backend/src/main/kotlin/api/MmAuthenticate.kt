@@ -7,6 +7,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import exposed.dao.MmUser
+import exposed.dsl.MmUsers
 import io.ktor.application.ApplicationCall
 import io.ktor.auth.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -18,16 +19,16 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 /**
- * Constants
+ * Authentication constants.
  */
 object MmAuthenticate {
     const val API_AUTH = "ApiAuth"
 }
 
 /**
- * Configuration settings for OAuth.
+ * Authentication configuration.
  */
-fun Authentication.Configuration.mmOAuthConfiguration() {
+fun Authentication.Configuration.mmAuthConfiguration() {
     basic(MmAuthenticate.API_AUTH) {
         // skip if session exists
         skipWhen {
@@ -44,23 +45,29 @@ fun Authentication.Configuration.mmOAuthConfiguration() {
     }
 }
 
+/**
+ * Basic authentication.
+ * Server authentication code is sent by password in [credentials].
+ * @param [credentials] that contains the server authentication code.
+ */
 private suspend fun ApplicationCall.basicValidation(
         credentials: UserPasswordCredential
 ): Principal? = when {
     mmSession == null -> authWithServerAuthCode(credentials)
-    mmSession!!.isExpired -> {
-        val existingUser = transaction { MmUser[mmSession!!.subject] }
-        if (existingUser.refreshToken != null) {
-            val (tokenResponse, idToken) = makeGoogleAuthRequest(existingUser.refreshToken!!).await()
-            createSession(tokenResponse, idToken)
-            UserIdPrincipal(idToken.payload.subject)
-        } else {
-            authWithServerAuthCode(credentials)
-        }
-    }
+    mmSession!!.isExpired -> transaction { MmUser[mmSession!!.subject] }
+            .refreshToken?.let {
+        val (tokenResponse, idToken) = makeGoogleAuthRequest(it).await()
+        createSession(tokenResponse, idToken)
+        UserIdPrincipal(idToken.payload.subject)
+    } ?: authWithServerAuthCode(credentials)
     else -> UserIdPrincipal(mmSession!!.subject) // Nothing wrong with this token
 }
 
+/**
+ * Implementation of Google's server auth code flow.
+ * Client sends server auth code -> server exchanges auth code for access & refresh tokens.
+ * @param [credentials] that contains the server authentication code.
+ */
 private suspend fun ApplicationCall.authWithServerAuthCode(
         credentials: UserPasswordCredential
 ): UserIdPrincipal {
@@ -75,6 +82,11 @@ private suspend fun ApplicationCall.authWithServerAuthCode(
     return UserIdPrincipal(idToken.payload.subject)
 }
 
+/**
+ * Creates a new user in the [MmUsers] database.
+ * @param [tokenResponse] response from Google containing the access & refresh tokens.
+ * @param [idToken] containing the user's profile information.
+ */
 private fun ApplicationCall.createNewUser(
         tokenResponse: GoogleTokenResponse,
         idToken: GoogleIdToken
@@ -90,6 +102,12 @@ private fun ApplicationCall.createNewUser(
     }
 }
 
+/**
+ * Creates a new session to persist data between calls.
+ * Allows clients to save session information to skip authentication in subsequent calls.
+ * @param [tokenResponse] response from Google containing the access & refresh tokens.
+ * @param [idToken] containing the user's profile information.
+ */
 private fun ApplicationCall.createSession(
         tokenResponse: GoogleTokenResponse,
         idToken: GoogleIdToken
@@ -105,6 +123,7 @@ private fun ApplicationCall.createSession(
 
 /**
  * Verifies Google sign in tokens sent from client.
+ * @param [authCode] client authentication code to verify with Google.
  */
 private fun makeGoogleAuthRequest(
         authCode: String
@@ -118,7 +137,9 @@ private fun makeGoogleAuthRequest(
         "" // no redirect URL needed
 )
 
-
+/**
+ * Helper function to wait for blocking authentication token requests.
+ */
 private suspend fun GoogleAuthorizationCodeTokenRequest.await(
 ): Pair<GoogleTokenResponse, GoogleIdToken> = suspendCoroutine { continuation ->
     thread(start = true) {
@@ -128,8 +149,8 @@ private suspend fun GoogleAuthorizationCodeTokenRequest.await(
             continuation.resume(tokenResponse to idToken)
         } catch (e: TokenResponseException) {
             continuation.resumeWithException(ServerAuthTokenException("Server authentication token invalid."))
-        } catch (e: NullPointerException) {
-            continuation.resumeWithException(ServerAuthTokenException("Server authentication token is null."))
+        } catch (e: Exception) {
+            continuation.resumeWithException(ServerAuthTokenException("Something went wrong validating token."))
         }
     }
 }

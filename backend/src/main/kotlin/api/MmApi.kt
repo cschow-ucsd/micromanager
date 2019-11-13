@@ -12,7 +12,10 @@ import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
 import util.mmSession
 
-
+/**
+ * Public routes.
+ * Can be accessed by directly calling the endpoints.
+ */
 @KtorExperimentalAPI
 fun Route.mmPublicApi() {
     get("/") {
@@ -36,6 +39,9 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
     }
 }
 
+/**
+ * Checks if a session exists before handling the API calls.
+ */
 private fun ApplicationCall.handleSession() {
     if (mmSession == null) throw NoSessionException("Missing session!")
 }

@@ -6,8 +6,10 @@ import io.ktor.routing.routing
 import io.ktor.util.KtorExperimentalAPI
 
 /**
- * Handles the installs of features and routing of all API calls.
- * Also handles logins.
+ * Main structure of the API.
+ * 1. Sets up database
+ * 2. Install features that the API uses
+ * 3. Route the endpoints.
  */
 @KtorExperimentalAPI
 fun Application.mmMain() {

@@ -4,6 +4,9 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
 
+/**
+ * Entry point that starts the server.
+ */
 @KtorExperimentalAPI
 fun main() {
     val server = embeddedServer(

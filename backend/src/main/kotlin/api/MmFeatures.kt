@@ -16,6 +16,11 @@ import util.BACKEND_TRANSFORMER_HEX
 import util.mmDotenv
 import java.io.File
 
+/**
+ * Functionality injected into the request/response pipelines.
+ * E.g. sessions to persist data between calls
+ * E.g. user authentication
+ */
 @KtorExperimentalAPI
 fun Application.installFeatures() {
     install(ContentNegotiation) {
@@ -37,6 +42,6 @@ fun Application.installFeatures() {
         mmStatusPagesConfiguration()
     }
     install(Authentication) {
-        mmOAuthConfiguration()
+        mmAuthConfiguration()
     }
 }

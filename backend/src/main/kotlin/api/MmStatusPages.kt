@@ -7,6 +7,11 @@ import io.ktor.response.respond
 import org.jetbrains.exposed.exceptions.EntityNotFoundException
 import util.logger
 
+/**
+ * [StatusPages] configuration.
+ * Handles exceptions thrown in the receive/response pipeline.
+ * Logs exception messages and responds corresponding status code.
+ */
 fun StatusPages.Configuration.mmStatusPagesConfiguration() {
     exception<MmAuthException> {
         call.logger.debug(it.message)
