@@ -1,7 +1,10 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.android.application'
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -45,6 +48,10 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
+
+//    tasks {
+//        assembleDebug.dependsOn mapLocalHost
+//    }
 }
 
 dependencies {
@@ -70,4 +77,29 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.viewpager:viewpager:1.0.0'
+}
+
+/**
+ * Maps the localhost port 8080 to the emulator.
+ * This task should run every time an emulator is started.
+ */
+task mapLocalHost(type: Exec) {
+    def rootProject = project.rootDir
+    def localProperties = new File(rootProject, "local.properties")
+    if (localProperties.exists()) {
+        Properties properties = new Properties()
+        localProperties.withInputStream { instr ->
+            properties.load(instr)
+        }
+        def sdkDir = properties.getProperty("sdk.dir")
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            def adbPath = sdkDir + "\\platform-tools"
+            workingDir adbPath
+            commandLine 'cmd', '/c', 'adb.exe reverse tcp:8080 tcp:8080'
+        } else {
+            def adbPath = sdkDir + "/platform-tools"
+            workingDir adbPath
+            commandLine 'adb reverse tcp:8080 tcp:8080'
+        }
+    }
 }
