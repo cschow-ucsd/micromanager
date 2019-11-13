@@ -49,6 +49,7 @@ fun Authentication.Configuration.mmAuthConfiguration() {
  * Basic authentication.
  * Server authentication code is sent by password in [credentials].
  * @param [credentials] that contains the server authentication code.
+ * @return [Principal] to show that the user has been authenticated.
  */
 private suspend fun ApplicationCall.basicValidation(
         credentials: UserPasswordCredential
@@ -67,6 +68,7 @@ private suspend fun ApplicationCall.basicValidation(
  * Implementation of Google's server auth code flow.
  * Client sends server auth code -> server exchanges auth code for access & refresh tokens.
  * @param [credentials] that contains the server authentication code.
+ * @return [UserIdPrincipal] to show that the user has been authenticated.
  */
 private suspend fun ApplicationCall.authWithServerAuthCode(
         credentials: UserPasswordCredential
@@ -124,6 +126,7 @@ private fun ApplicationCall.createSession(
 /**
  * Verifies Google sign in tokens sent from client.
  * @param [authCode] client authentication code to verify with Google.
+ * @return [GoogleAuthorizationCodeTokenRequest] to be sent to Google for authentication.
  */
 private fun makeGoogleAuthRequest(
         authCode: String
@@ -139,6 +142,7 @@ private fun makeGoogleAuthRequest(
 
 /**
  * Helper function to wait for blocking authentication token requests.
+ * @return pair of [GoogleTokenResponse] & [GoogleIdToken] after validated.
  */
 private suspend fun GoogleAuthorizationCodeTokenRequest.await(
 ): Pair<GoogleTokenResponse, GoogleIdToken> = suspendCoroutine { continuation ->
