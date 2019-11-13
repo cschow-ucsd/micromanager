@@ -95,7 +95,7 @@ task mapLocalHost(type: Exec) {
         } else {
             def adbPath = sdkDir + "/platform-tools"
             workingDir adbPath
-            commandLine 'adb reverse tcp:8080 tcp:8080'
+            commandLine './adb reverse tcp:8080 tcp:8080'
         }
     }
 }
