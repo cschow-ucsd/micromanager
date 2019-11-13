@@ -46,11 +46,13 @@ public class MainActivity extends AppCompatActivity {
                 mmViewModel.loginToApi();
                 break;
             case GoogleSignInViewModel.ACCOUNT_LOGIN_SUCCESS:
+                Log.d(TAG, "handleGoogleAccountStateChange: Login Success.");
+                mmViewModel.initService(gsiViewModel.getAccount().getServerAuthCode());
+                mmViewModel.loginToApi();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.framelayout_main_container, new LoadingFragment())
                         .commit();
-                mmViewModel.initService(gsiViewModel.getAccount().getServerAuthCode());
-                mmViewModel.loginToApi();
+                break;
             case GoogleSignInViewModel.ACCOUNT_NOT_FOUND:
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.framelayout_main_container, new LoginFragment())
