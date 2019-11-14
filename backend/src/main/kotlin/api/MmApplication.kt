@@ -1,6 +1,6 @@
 package api
 
-import exposed.MmDatabase
+import exposed.MmDatabaseFactory
 import io.ktor.application.Application
 import io.ktor.routing.routing
 import io.ktor.util.KtorExperimentalAPI
@@ -12,8 +12,8 @@ import io.ktor.util.KtorExperimentalAPI
  * 3. Route the endpoints.
  */
 @KtorExperimentalAPI
-fun Application.mmMain() {
-    MmDatabase.setup()
+fun Application.mmModule() {
+    MmDatabaseFactory.init()
     installFeatures()
 
     routing {

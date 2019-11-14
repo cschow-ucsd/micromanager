@@ -1,5 +1,6 @@
 package api
 
+import MmHoconConfig
 import com.google.api.client.auth.oauth2.TokenResponseException
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
@@ -10,8 +11,10 @@ import exposed.dao.MmUser
 import exposed.dsl.MmUsers
 import io.ktor.application.ApplicationCall
 import io.ktor.auth.*
+import io.ktor.util.KtorExperimentalAPI
 import org.jetbrains.exposed.sql.transactions.transaction
-import util.*
+import util.logger
+import util.mmSession
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 import kotlin.coroutines.resume
@@ -28,6 +31,7 @@ object MmAuthenticate {
 /**
  * Authentication configuration.
  */
+@KtorExperimentalAPI
 fun Authentication.Configuration.mmAuthConfiguration() {
     basic(MmAuthenticate.API_AUTH) {
         // skip if session exists
@@ -51,6 +55,7 @@ fun Authentication.Configuration.mmAuthConfiguration() {
  * @param [credentials] that contains the server authentication code.
  * @return [Principal] to show that the user has been authenticated.
  */
+@KtorExperimentalAPI
 private suspend fun ApplicationCall.basicValidation(
         credentials: UserPasswordCredential
 ): Principal? = when {
@@ -70,6 +75,7 @@ private suspend fun ApplicationCall.basicValidation(
  * @param [credentials] that contains the server authentication code.
  * @return [UserIdPrincipal] to show that the user has been authenticated.
  */
+@KtorExperimentalAPI
 private suspend fun ApplicationCall.authWithServerAuthCode(
         credentials: UserPasswordCredential
 ): UserIdPrincipal {
@@ -94,7 +100,7 @@ private fun ApplicationCall.createNewUser(
         idToken: GoogleIdToken
 ) {
     if (tokenResponse.refreshToken == null) {
-        logger.debug("WARNING: No refresh token found for new user. Server auth code must be supplied every time.")
+        logger.warn("No refresh token found for new user. Server auth code must be supplied every time.")
     }
     transaction {
         MmUser.new(idToken.payload.subject) {
@@ -128,14 +134,15 @@ private fun ApplicationCall.createSession(
  * @param [authCode] client authentication code to verify with Google.
  * @return [GoogleAuthorizationCodeTokenRequest] to be sent to Google for authentication.
  */
+@KtorExperimentalAPI
 private fun makeGoogleAuthRequest(
         authCode: String
 ) = GoogleAuthorizationCodeTokenRequest(
         NetHttpTransport(),
         JacksonFactory.getDefaultInstance(),
         "https://oauth2.googleapis.com/token",
-        mmDotenv.BACKEND_OAUTH_CLIENT_ID,
-        mmDotenv.BACKEND_OAUTH_CLIENT_SECRET,
+        MmHoconConfig.mmClientId,
+        MmHoconConfig.mmClientSecret,
         authCode,
         "" // no redirect URL needed
 )

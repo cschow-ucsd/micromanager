@@ -13,8 +13,5 @@ local.properties
 .idea/caches
 .idea/modules.xml
 
-# Ignore API Keys
-*.env
-
-# Ignore session and database files
-**/data/
+# Ignore sessions file
+*.sessions

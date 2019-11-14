@@ -1,15 +1,17 @@
-import exposed.MmDatabase
+import exposed.MmDatabaseFactory
 import exposed.dao.MmUser
+import io.ktor.util.KtorExperimentalAPI
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
-class MmDatabaseTest {
+@KtorExperimentalAPI
+class MmDatabaseFactoryTest {
     @BeforeTest
     fun setup() {
-        MmDatabase.setup()
+        MmDatabaseFactory.init()
     }
 
     @Test
