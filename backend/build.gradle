@@ -22,14 +22,13 @@ dependencies {
     implementation "io.ktor:ktor-client-json-jvm:$ktor_version"
     implementation "io.ktor:ktor-client-auth-jvm:$ktor_version"
     implementation "io.ktor:ktor-auth-jwt:$ktor_version"
-    compile("io.ktor:ktor-server-sessions:$ktor_version")
 
     // database
     compile 'org.jetbrains.exposed:exposed:0.17.7'
     compile 'com.zaxxer:HikariCP:3.4.1'
     compile "org.postgresql:postgresql:42.2.8"
 
-    // scheduling library
+    // scheduling
     implementation 'org.optaplanner:optaplanner-core:7.28.0.Final'
 
     // google OAuth
