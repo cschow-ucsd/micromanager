@@ -71,7 +71,7 @@ private suspend fun ApplicationCall.basicValidation(
 
 /**
  * Implementation of Google's server auth code flow.
- * Client sends server auth code -> server exchanges auth code for access & refresh tokens.
+ * Client sends auth code to server -> server exchanges auth code for access & refresh tokens.
  * @param [credentials] that contains the server authentication code.
  * @return [UserIdPrincipal] to show that the user has been authenticated.
  */

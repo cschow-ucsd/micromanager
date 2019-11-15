@@ -9,11 +9,9 @@ import io.ktor.features.StatusPages
 import io.ktor.gson.gson
 import io.ktor.sessions.SessionTransportTransformerMessageAuthentication
 import io.ktor.sessions.Sessions
-import io.ktor.sessions.directorySessionStorage
 import io.ktor.sessions.header
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.hex
-import java.io.File
 
 /**
  * Functionality injected into the request/response pipelines.
@@ -31,7 +29,7 @@ fun Application.installFeatures() {
     install(Sessions) {
         header<MmSession>(
                 name = "MICROMANAGER_SESSION",
-                storage = directorySessionStorage(File(".sessions"))
+                storage = MmSessionStorage()
         ) {
             val hex = hex(MmHoconConfig.mmTransformerHex)
             transform(SessionTransportTransformerMessageAuthentication(hex))
