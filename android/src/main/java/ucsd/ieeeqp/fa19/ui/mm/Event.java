@@ -6,7 +6,7 @@ public class Event {
     private int duration; 
     private double longitude; 
     private double latitude; 
-    private int reccurences; 
+    private int recurrences;
     private int priority;
 
     public Event(String eventName, int duration, double longitude, double latitude, int reoccurances, int priority) {
@@ -14,7 +14,7 @@ public class Event {
         this.duration = duration;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.reccurences = reccurences;
+        this.recurrences = recurrences;
         this.priority = priority;
     }
 
@@ -50,12 +50,12 @@ public class Event {
         this.latitude = latitude;
     }
 
-    public int getReoccurences() {
-        return reccurences;
+    public int getRecurrences() {
+        return recurrences;
     }
 
-    public void setReoccurences(int reoccurences) {
-        this.reccurences = reoccurences;
+    public void setRecurrences(int recurrences) {
+        this.recurrences = recurrences;
     }
 
     public int getPriority() {
