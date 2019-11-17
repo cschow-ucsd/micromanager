@@ -36,8 +36,11 @@ public class NavigationFragment extends Fragment {
             case R.id.item_schedule:
                 fragmentIndex = 0;
                 break;
-            case R.id.item_settings:
+            case R.id.item_results:
                 fragmentIndex = 1;
+                break;
+            case R.id.item_settings:
+                fragmentIndex = 2;
                 break;
         }
         viewPager.setCurrentItem(fragmentIndex, true);

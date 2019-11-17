@@ -4,4 +4,5 @@
     <string name="oauth_client_id">168037840247-anu4hfobuqucmnpfsflvfbnrgjcp4m9i.apps.googleusercontent.com</string>
     <string name="nav_schedule">Schedule</string>
     <string name="nav_settings">Settings</string>
+    <string name="nav_results">Results</string>
 </resources>

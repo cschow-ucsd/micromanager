@@ -7,6 +7,11 @@
         android:title="@string/nav_schedule" />
 
     <item
+        android:id="@+id/item_results"
+        android:icon="@drawable/ic_done_black_24dp"
+        android:title="@string/nav_results" />
+
+    <item
         android:id="@+id/item_settings"
         android:icon="@drawable/ic_settings_black_24dp"
         android:title="@string/nav_settings" />
