@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/item_schedule"
+        android:icon="@drawable/ic_access_time_black_24dp"
+        android:title="@string/nav_schedule" />
+
+    <item
+        android:id="@+id/item_settings"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="@string/nav_settings" />
+</menu>

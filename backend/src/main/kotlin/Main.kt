@@ -1,12 +1,7 @@
-import io.ktor.application.Application
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
+import io.ktor.server.netty.EngineMain
 
-fun main() {
-    val server = embeddedServer(
-            factory = Netty,
-            port = 8080,
-            module = Application::main
-    )
-    server.start(wait = true)
-}
+/**
+ * Entry point that starts the server.
+ * Uses [EngineMain] with application.conf to start Netty server.
+ */
+fun main(args: Array<String>): Unit = EngineMain.main(args)

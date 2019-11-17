@@ -12,3 +12,6 @@ local.properties
 .idea/libraries
 .idea/caches
 .idea/modules.xml
+
+# Ignore sessions file
+*.sessions
