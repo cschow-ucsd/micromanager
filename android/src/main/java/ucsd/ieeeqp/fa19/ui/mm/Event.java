@@ -9,7 +9,7 @@ public class Event {
     private int recurrences;
     private int priority;
 
-    public Event(String eventName, int duration, double longitude, double latitude, int reoccurances, int priority) {
+    public Event(String eventName, int duration, double longitude, double latitude, int recurrences, int priority) {
         this.eventName = eventName;
         this.duration = duration;
         this.longitude = longitude;
