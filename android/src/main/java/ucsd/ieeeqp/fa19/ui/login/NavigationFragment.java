@@ -13,7 +13,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import ucsd.ieeeqp.fa19.R;
 
 public class NavigationFragment extends Fragment {
-    private BottomNavigationView navigationView;
     private ViewPager viewPager;
 
     @Nullable
@@ -25,7 +24,7 @@ public class NavigationFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        navigationView = view.findViewById(R.id.bottomnav_nav_nav);
+        BottomNavigationView navigationView = view.findViewById(R.id.bottomnav_nav_nav);
         navigationView.setOnNavigationItemSelectedListener(this::handleMenuItemSelected);
         viewPager = view.findViewById(R.id.viewpager_nav_container);
         viewPager.setAdapter(new NavigationPagerAdapter(getChildFragmentManager()));

@@ -1,11 +1,11 @@
 package ucsd.ieeeqp.fa19.ui.mm;
 
 public class Event {
-    
-    private String eventName; 
-    private int duration; 
-    private double longitude; 
-    private double latitude; 
+
+    private String eventName;
+    private int duration;
+    private double longitude;
+    private double latitude;
     private int recurrences;
     private int priority;
 
