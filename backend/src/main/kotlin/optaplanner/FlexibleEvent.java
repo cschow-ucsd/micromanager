@@ -15,7 +15,7 @@ public class FlexibleEvent {
         return startTime;
     }
 
-    public Integer getDuration(){
+    public Integer getDuration() {
         return duration;
     }
 }

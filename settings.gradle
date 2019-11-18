@@ -8,6 +8,8 @@ pluginManagement {
     }
 }
 
+enableFeaturePreview('GRADLE_METADATA')
+
 rootProject.name = 'micromanager'
 
-include ':backend', ':android'
+include ':backend', ':android', ':common'

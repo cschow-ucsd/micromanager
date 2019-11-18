@@ -37,6 +37,9 @@ dependencies {
     // logging
     compile "ch.qos.logback:logback-classic:1.2.3"
 
+    // common
+    implementation project(":common")
+
     // test
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 }

@@ -8,6 +8,7 @@ import io.ktor.util.KtorExperimentalAPI
  */
 @KtorExperimentalAPI
 fun main(args: Array<String>) {
+    println(sample.hello())
     try {
         EngineMain.main(args)
     } catch (e: ConfigException.UnresolvedSubstitution) {
