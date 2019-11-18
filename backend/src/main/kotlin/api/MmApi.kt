@@ -32,9 +32,9 @@ fun Route.mmPublicApi() {
  * Can only be accessed if session exists or logged in.
  */
 fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
-
     route("/api") {
         get("/login") {
+            call.handleSession()
             call.respond(HttpStatusCode.OK)
         }
         post("/op-solve") {
