@@ -7,17 +7,14 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import events.BaseFlexibleEvent;
 import ucsd.ieeeqp.fa19.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ScheduleFragment extends Fragment {
-    private List<FlexibleEvent> flexibleEvents;
-
-    public ScheduleFragment() {
-        flexibleEvents = new ArrayList<FlexibleEvent>();
-    }
+    private List<BaseFlexibleEvent> flexibleEvents = new ArrayList<>();
 
     @Nullable
     @Override
@@ -30,7 +27,7 @@ public class ScheduleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         // TODO: display events on the screen with RecyclerView
 
-        // TODO: use view.findViewbyId() to get the floating action button (refer to MainActivity if you forgot how to do that)
+        // TODO: use view.findViewById() to get the floating action button (refer to MainActivity if you forgot how to do that)
         // TODO: Set a listener on the FAB and launch NewEventFragment when clicked
         // TODO: Set a NewEventListener on the NewEventFragment to get the event from the fragment and add it to events after the event is submitted)
     }

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import events.BaseFlexibleEvent;
 import ucsd.ieeeqp.fa19.R;
 
 public class NewEventFragment extends Fragment {
@@ -28,11 +29,12 @@ public class NewEventFragment extends Fragment {
     /**
      * Called when a new event is created and submitted.
      * Invokes a callback on the NewEventListener.
-     * @param flexibleEvent new event created
+     *
+     * @param event new event created
      */
-    private void submit(FlexibleEvent flexibleEvent) {
+    private void submit(BaseFlexibleEvent event) {
         if (listener != null) {
-            listener.onEventSubmitted(flexibleEvent);
+            listener.onEventSubmitted(event);
         }
         getFragmentManager().popBackStack();
     }
@@ -45,7 +47,7 @@ public class NewEventFragment extends Fragment {
      * Custom listener to listen for the creation of new events.
      */
     public interface NewEventListener {
-        void onEventSubmitted(FlexibleEvent flexibleEvent);
+        void onEventSubmitted(BaseFlexibleEvent event);
     }
 }
 
