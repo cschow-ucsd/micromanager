@@ -1,6 +1,6 @@
 package optaplanner;
 
-import model.BaseFlexibleEvent;
+import events.BaseFlexibleEvent;
 import org.jetbrains.annotations.NotNull;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;

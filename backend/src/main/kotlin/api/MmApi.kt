@@ -1,13 +1,17 @@
 package api
 
+import call.MmProblemRequest
+import call.MmSolveAccepted
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.http.HttpStatusCode
+import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.Route
 import io.ktor.routing.get
+import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
 import util.mmSession
@@ -28,13 +32,26 @@ fun Route.mmPublicApi() {
  * Can only be accessed if session exists or logged in.
  */
 fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
+
     route("/api") {
         get("/login") {
             call.respond(HttpStatusCode.OK)
         }
-        get("/protected") {
-            call.handleSession()
-            call.respond("It's protected!")
+        post("/op-solve") {
+            val problem = call.receive<MmProblemRequest>()
+            // TODO: solve the problem asynchronously, return an 202 Accepted response
+            call.respond(
+                    status = HttpStatusCode.Accepted,
+                    message = MmSolveAccepted(TODO(), TODO(), TODO())
+            )
+        }
+        get("/status/{pid}") {
+            val pid = call.parameters["pid"]
+            // TODO: retrieve status of the problem with pid
+            call.respond(
+                    status = HttpStatusCode.Accepted,
+                    message = MmSolveAccepted(TODO(), TODO(), TODO())
+            )
         }
     }
 }

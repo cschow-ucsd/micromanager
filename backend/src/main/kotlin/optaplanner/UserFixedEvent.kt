@@ -1,6 +1,6 @@
 package optaplanner
 
-import model.BaseFixedEvent
+import events.BaseFixedEvent
 
 class UserFixedEvent(
         event: BaseFixedEvent

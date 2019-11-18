@@ -1,7 +1,7 @@
 package optaplanner
 
-import model.BaseEvent
-import model.BaseFixedEvent
+import events.BaseEvent
+import events.BaseFixedEvent
 
 class PlannedFixedEvent(
         event: PlanningFlexibleEvent

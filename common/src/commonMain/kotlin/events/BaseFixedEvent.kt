@@ -1,4 +1,4 @@
-package model
+package events
 
 interface BaseFixedEvent : BaseEvent {
     val endTime: Int

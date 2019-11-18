@@ -1,4 +1,4 @@
-package model
+package events
 
 interface BaseFlexibleEvent : BaseEvent {
     val type: String

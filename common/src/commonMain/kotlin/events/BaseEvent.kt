@@ -1,4 +1,4 @@
-package model
+package events
 
 interface BaseEvent {
     val name: String
