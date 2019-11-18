@@ -1,5 +1,6 @@
 package api
 
+import call.MmPIDs
 import call.MmProblemRequest
 import call.MmSolveAccepted
 import io.ktor.application.ApplicationCall
@@ -42,15 +43,15 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
             // TODO: solve the problem asynchronously, return an 202 Accepted response
             call.respond(
                     status = HttpStatusCode.Accepted,
-                    message = MmSolveAccepted(TODO(), TODO(), TODO())
+                    message = MmSolveAccepted(TODO(), TODO())
             )
         }
-        get("/status/{pid}") {
-            val pid = call.parameters["pid"]
+        get("/status") {
+            val pids = call.receive<MmPIDs>()
             // TODO: retrieve status of the problem with pid
             call.respond(
                     status = HttpStatusCode.Accepted,
-                    message = MmSolveAccepted(TODO(), TODO(), TODO())
+                    message = MmSolveAccepted(TODO(), TODO())
             )
         }
     }
