@@ -1,8 +1,6 @@
 package api
 
-import call.MmPIDs
-import call.MmProblemRequest
-import call.MmSolveAccepted
+import call.*
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
@@ -47,11 +45,19 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
             )
         }
         get("/status") {
-            val pids = call.receive<MmPIDs>()
+            val mmPIDs = call.receive<MmPIDs>()
             // TODO: retrieve status of the problem with pid
             call.respond(
                     status = HttpStatusCode.Accepted,
                     message = MmSolveAccepted(TODO(), TODO())
+            )
+        }
+        get("/solution") {
+            val mmPID = call.receive<MmPID>()
+            // TODO: retrieve solution of the problem with pid
+            call.respond(
+                    status = HttpStatusCode.OK,
+                    message = MmSolutionResponse(TODO(), TODO())
             )
         }
     }

@@ -3,10 +3,7 @@ package ucsd.ieeeqp.fa19.service
 
 import android.content.Context
 import android.util.Log
-import call.MmPIDs
-import call.MmProblemRequest
-import call.MmSolveAccepted
-import call.MmStatusResponse
+import call.*
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.response.HttpResponse
@@ -46,6 +43,12 @@ class MmService(
             mmPIDs: MmPIDs
     ): Deferred<MmStatusResponse> = client.async {
         client.get<MmStatusResponse>(route("/api/status"), body = mmPIDs)
+    }
+
+    fun getSolutionAsync(
+            mmPID: MmPID
+    ): Deferred<MmSolutionResponse> = client.async {
+        client.get<MmSolutionResponse>(route("/api/solution"), body = mmPID)
     }
 
     private fun route(
