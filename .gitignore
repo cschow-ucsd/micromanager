@@ -13,5 +13,5 @@ local.properties
 .idea/caches
 .idea/modules.xml
 
-# Ignore sessions file
 *.sessions
+**/reference.conf
