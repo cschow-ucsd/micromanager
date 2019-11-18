@@ -7,66 +7,59 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 @PlanningEntity
 public class PlanningFlexibleEvent implements BaseFlexibleEvent {
-    private String name;
-    private Integer startTime, endTime, duration;
-    private String type;
+    // Planning variable
+    private int startTime;
+
+    // Event variables
+    private String name, type;
     private double longitude, latitude;
-    public static final String SOME_TYPE = ""; // TODO: kinds constants
+    private int duration;
+
+    public PlanningFlexibleEvent(String name, String type, double longitude, double latitude, int duration) {
+        this.name = name;
+        this.type = type;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.duration = duration;
+    }
+
+    public PlanningFlexibleEvent(@NotNull BaseFlexibleEvent e) {
+        this(e.getName(), e.getType(), e.getLongitude(), e.getLatitude(), e.getDuration());
+    }
+
+    public PlannedFixedEvent toPlannedFixedEvent() {
+        return new PlannedFixedEvent(this);
+    }
 
     @PlanningVariable(valueRangeProviderRefs = {"availableStartTimes"})
     public Integer getStartTime() {
         return startTime;
     }
 
+    @NotNull
     @Override
-    public int getDuration() {
-        return duration;
+    public String getName() {
+        return name;
     }
 
     @NotNull
     @Override
     public String getType() {
-        return this.type;
-    }
-
-    @Override
-    public void setType(@NotNull String type) {
-        this.type = type;
-    }
-
-    @Override
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public void setName(@NotNull String name) {
-        this.name = name;
+        return type;
     }
 
     @Override
     public double getLongitude() {
-        return this.longitude;
-    }
-
-    @Override
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+        return longitude;
     }
 
     @Override
     public double getLatitude() {
-        return this.latitude;
+        return latitude;
     }
 
     @Override
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public int getDuration() {
+        return duration;
     }
 }

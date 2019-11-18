@@ -1,7 +1,7 @@
 package model
 
 interface BaseEvent {
-    var name: String
-    var longitude: Double
-    var latitude: Double
+    val name: String
+    val longitude: Double
+    val latitude: Double
 }
