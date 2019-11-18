@@ -5,8 +5,6 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.impl.score.director.easy.EasyScoreCalculator;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ScoreCalculator implements EasyScoreCalculator<EventSchedule> {
 
@@ -16,7 +14,7 @@ public class ScoreCalculator implements EasyScoreCalculator<EventSchedule> {
         int softScore = 0;
 
         ArrayList<int[]> occupiedSlots = new ArrayList<>();
-        for(FlexibleEvent event : eventSchedule.getFlexibleEventList()) {
+        for(PlanningFlexibleEvent event : eventSchedule.getPlanningFlexibleEventList()) {
             int endTime = event.getStartTime() + event.getDuration();
             for(int[] a : occupiedSlots) {
                 if((event.getStartTime() > a[0] && event.getStartTime() < a[1]) || (endTime > a[0] && endTime < a[1])){

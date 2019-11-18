@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScheduleFragment extends Fragment {
-    private List<Event> events;
+    private List<FlexibleEvent> flexibleEvents;
 
     public ScheduleFragment() {
-        events = new ArrayList<Event>();
+        flexibleEvents = new ArrayList<FlexibleEvent>();
     }
 
     @Nullable

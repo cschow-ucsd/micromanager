@@ -9,12 +9,12 @@ import java.util.List;
 
 @PlanningSolution
 public class EventSchedule {
-    private List<FlexibleEvent> flexibleEventList;
+    private List<PlanningFlexibleEvent> planningFlexibleEventList;
     private HardSoftScore score;
 
     @PlanningEntityCollectionProperty
-    public List<FlexibleEvent> getFlexibleEventList() {
-        return flexibleEventList;
+    public List<PlanningFlexibleEvent> getPlanningFlexibleEventList() {
+        return planningFlexibleEventList;
     }
 
     @PlanningScore

@@ -28,11 +28,11 @@ public class NewEventFragment extends Fragment {
     /**
      * Called when a new event is created and submitted.
      * Invokes a callback on the NewEventListener.
-     * @param event new event created
+     * @param flexibleEvent new event created
      */
-    private void submit(Event event) {
+    private void submit(FlexibleEvent flexibleEvent) {
         if (listener != null) {
-            listener.onEventSubmitted(event);
+            listener.onEventSubmitted(flexibleEvent);
         }
         getFragmentManager().popBackStack();
     }
@@ -45,7 +45,7 @@ public class NewEventFragment extends Fragment {
      * Custom listener to listen for the creation of new events.
      */
     public interface NewEventListener {
-        void onEventSubmitted(Event event);
+        void onEventSubmitted(FlexibleEvent flexibleEvent);
     }
 }
 
