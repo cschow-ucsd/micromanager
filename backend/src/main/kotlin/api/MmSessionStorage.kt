@@ -33,5 +33,4 @@ class MmSessionStorage : SessionStorage {
             mmSession.sessionBytes = SerialBlob(bytes)
         }
     }
-
 }
