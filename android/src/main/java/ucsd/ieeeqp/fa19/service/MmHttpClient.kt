@@ -11,7 +11,6 @@ import io.ktor.client.request.header
 import io.ktor.client.response.HttpReceivePipeline
 
 object MmHttpClient {
-    const val BASE_URL = "http://localhost:8080"
     const val MICROMANAGER_SESSION = "MICROMANAGER_SESSION"
 
     fun create(

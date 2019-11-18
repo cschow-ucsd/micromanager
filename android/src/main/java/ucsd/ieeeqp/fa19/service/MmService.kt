@@ -14,6 +14,7 @@ class MmService(
         serverAuthCode: String?
 ) {
 
+    private val config = LocalhostConfig(context)
     private val preferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
     private val client = MmHttpClient.create(
             serverAuthCode = serverAuthCode,
@@ -36,7 +37,7 @@ class MmService(
 
     private fun route(
             path: String
-    ): String = "${MmHttpClient.BASE_URL}/$path"
+    ): String = "${config["dynamic_localhost"]}/$path"
 
     fun close() {
         client.close()
