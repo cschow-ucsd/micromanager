@@ -1,6 +1,6 @@
 package model
 
-interface BaseFlexibleEvent: BaseEvent {
+interface BaseFlexibleEvent : BaseEvent {
     var type: String
     var duration: Int
 }

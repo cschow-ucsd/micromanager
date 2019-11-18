@@ -1,6 +1,6 @@
 package model
 
-interface BaseFixedEvent: BaseEvent {
+interface BaseFixedEvent : BaseEvent {
     val startTime: Int
     val endTime: Int
 }
