@@ -15,5 +15,5 @@ local.properties
 .idea/modules.xml
 .idea/misc.xml
 
-*.sessions
 **/reference.conf
+/out
