@@ -50,7 +50,7 @@ class MmService(
 
     private fun route(
             path: String
-    ): String = "${config["dynamic_localhost"]}/$path"
+    ): String = "${config["api_url"]}/$path"
 
     fun close() {
         client.close()
