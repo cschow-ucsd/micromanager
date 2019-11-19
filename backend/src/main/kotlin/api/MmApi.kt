@@ -1,6 +1,8 @@
 package api
 
-import call.*
+import call.MmPID
+import call.MmPIDs
+import call.MmProblemRequest
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
@@ -37,28 +39,34 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
             call.respond(HttpStatusCode.OK)
         }
         post("/op-solve") {
+            call.handleSession()
             val problem = call.receive<MmProblemRequest>()
-            // TODO: solve the problem asynchronously, return an 202 Accepted response
-            call.respond(
-                    status = HttpStatusCode.Accepted,
-                    message = MmSolveAccepted(TODO(), TODO())
-            )
+            TODO("solve the problem asynchronously, return an 202 Accepted response")
+//            call.respond(
+//                    status = HttpStatusCode.Accepted,
+//                    message = MmSolveAccepted(TODO(), TODO())
+//            )
         }
         get("/status") {
+            call.handleSession()
             val mmPIDs = call.receive<MmPIDs>()
-            // TODO: retrieve status of the problem with pid
-            call.respond(
-                    status = HttpStatusCode.Accepted,
-                    message = MmSolveAccepted(TODO(), TODO())
-            )
+            TODO("retrieve status of the problems with list of PIDs")
+//            val response: MmStatusResponse = mmPIDs.map {
+//                MmSolveAccepted(TODO(), TODO())
+//            }
+//            call.respond(
+//                    status = HttpStatusCode.Accepted,
+//                    message = response
+//            )
         }
         get("/solution") {
+            call.handleSession()
             val mmPID = call.receive<MmPID>()
-            // TODO: retrieve solution of the problem with pid
-            call.respond(
-                    status = HttpStatusCode.OK,
-                    message = MmSolutionResponse(TODO(), TODO())
-            )
+            TODO("retrieve solution of the problem with PID")
+//            call.respond(
+//                    status = HttpStatusCode.OK,
+//                    message = MmSolutionResponse(TODO(), TODO())
+//            )
         }
     }
 }

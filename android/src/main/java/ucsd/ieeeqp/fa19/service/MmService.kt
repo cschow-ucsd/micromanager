@@ -1,8 +1,6 @@
 package ucsd.ieeeqp.fa19.service
 
-
 import android.content.Context
-import android.util.Log
 import call.*
 import io.ktor.client.request.get
 import io.ktor.client.request.post
@@ -29,7 +27,6 @@ class MmService(
 
     fun loginAsync(): Deferred<Boolean> = client.async {
         val response = client.get<HttpResponse>(route("/api/login"))
-        Log.d("MmService", response.status.toString())
         response.status == HttpStatusCode.OK
     }
 
