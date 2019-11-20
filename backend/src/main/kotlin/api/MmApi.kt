@@ -69,12 +69,11 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
             call.handleSession()
             val subject = call.mmSession!!.subject
             val opPID = call.receive<OpPID>()
-            val solutionEvents = transaction {
-                MmSolutionEvent.find { (MmSolutionEvents.mmUser eq subject) and (MmSolutionEvents.opPID eq opPID) }
-            }
             val fixedEvents = mutableListOf<BaseFixedEvent>()
             val plannedEvents = mutableListOf<BaseFixedEvent>()
-            solutionEvents.forEach {
+            transaction {
+                MmSolutionEvent.find { (MmSolutionEvents.mmUser eq subject) and (MmSolutionEvents.opPID eq opPID) }
+            }.forEach {
                 if (it.isOpPlanned) plannedEvents.add(it)
                 else fixedEvents.add(it)
             }
