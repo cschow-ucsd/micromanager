@@ -1,5 +1,5 @@
 package call
 
-typealias MmPID = String
+typealias OpPID = String
 
-typealias MmPIDs = List<String>
+typealias OpPIDs = List<String>

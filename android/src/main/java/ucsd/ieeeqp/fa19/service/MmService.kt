@@ -37,15 +37,15 @@ class MmService(
     }
 
     fun getProblemProgressAsync(
-            mmPIDs: MmPIDs
+            opPIDs: OpPIDs
     ): Deferred<MmStatusResponse> = client.async {
-        client.get<MmStatusResponse>(route("/api/status"), body = mmPIDs)
+        client.get<MmStatusResponse>(route("/api/status"), body = opPIDs)
     }
 
     fun getSolutionAsync(
-            mmPID: MmPID
+            opPID: OpPID
     ): Deferred<MmSolutionResponse> = client.async {
-        client.get<MmSolutionResponse>(route("/api/solution"), body = mmPID)
+        client.get<MmSolutionResponse>(route("/api/solution"), body = opPID)
     }
 
     private fun route(

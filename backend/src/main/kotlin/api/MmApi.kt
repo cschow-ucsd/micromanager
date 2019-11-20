@@ -1,8 +1,11 @@
 package api
 
-import call.MmPID
-import call.MmPIDs
 import call.MmProblemRequest
+import call.MmSolutionResponse
+import call.OpPID
+import call.OpPIDs
+import exposed.dao.MmSolutionEvent
+import exposed.dsl.MmSolutionEvents
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
@@ -15,6 +18,9 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
+import optaplanner.BaseFixedEvent
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.transactions.transaction
 import util.mmSession
 
 /**
@@ -49,7 +55,7 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
         }
         get("/status") {
             call.handleSession()
-            val mmPIDs = call.receive<MmPIDs>()
+            val mmPIDs = call.receive<OpPIDs>()
             TODO("retrieve status of the problems with list of PIDs")
 //            val response: MmStatusResponse = mmPIDs.map {
 //                MmSolveAccepted(TODO(), TODO())
@@ -61,12 +67,18 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
         }
         get("/solution") {
             call.handleSession()
-            val mmPID = call.receive<MmPID>()
-            TODO("retrieve solution of the problem with PID")
-//            call.respond(
-//                    status = HttpStatusCode.OK,
-//                    message = MmSolutionResponse(TODO(), TODO())
-//            )
+            val subject = call.mmSession!!.subject
+            val opPID = call.receive<OpPID>()
+            val solutionEvents = transaction {
+                MmSolutionEvent.find { (MmSolutionEvents.mmUser eq subject) and (MmSolutionEvents.opPID eq opPID) }
+            }
+            val fixedEvents = mutableListOf<BaseFixedEvent>()
+            val plannedEvents = mutableListOf<BaseFixedEvent>()
+            solutionEvents.forEach {
+                if (it.isOpPlanned) plannedEvents.add(it)
+                else fixedEvents.add(it)
+            }
+            call.respond(HttpStatusCode.OK, MmSolutionResponse(fixedEvents, plannedEvents))
         }
     }
 }
