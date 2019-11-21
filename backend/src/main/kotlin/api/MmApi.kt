@@ -20,7 +20,6 @@ import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
 import optaplanner.EventSchedule
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.optaplanner.core.api.solver.Solver
 import org.optaplanner.core.api.solver.SolverFactory
 import util.findSolution
 import util.getSolutionStatuses
@@ -28,9 +27,8 @@ import util.mmSession
 import util.solve
 
 private val runningOpPIDs: MutableList<Pair<MmUser, MmSolveStatus>> = mutableListOf()
-private val opSolver: Solver<EventSchedule> = SolverFactory
+private val opSolverFactory: SolverFactory<EventSchedule> = SolverFactory
         .createFromXmlResource<EventSchedule>("event_schedule_solver_configuration.xml")
-        .buildSolver()
 
 /**
  * Public routes.
@@ -57,7 +55,7 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
             call.handleSession()
             val mmUser = transaction { MmUser[call.mmSession!!.subject] }
             val problem = call.receive<MmProblemRequest>()
-            val mmSolveStatus = problem.solve(opSolver, mmUser) {
+            val mmSolveStatus = problem.solve(opSolverFactory.buildSolver(), mmUser) {
                 runningOpPIDs += mmUser to it
                 call.respond(HttpStatusCode.Accepted, it)
             }

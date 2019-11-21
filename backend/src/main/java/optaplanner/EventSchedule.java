@@ -25,6 +25,7 @@ public class EventSchedule {
         this.planningFlexibleEventList = planningFlexibleEventList;
     }
 
+    // default constructor for optaplanner
     public EventSchedule() {
         this(new ArrayList<>(), new ArrayList<>());
     }
