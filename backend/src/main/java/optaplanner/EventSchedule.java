@@ -25,6 +25,10 @@ public class EventSchedule {
         this.planningFlexibleEventList = planningFlexibleEventList;
     }
 
+    public EventSchedule() {
+        this(new ArrayList<>(), new ArrayList<>());
+    }
+
     @PlanningEntityCollectionProperty
     public List<PlanningFlexibleEvent> getPlanningFlexibleEventList() {
         return planningFlexibleEventList;
