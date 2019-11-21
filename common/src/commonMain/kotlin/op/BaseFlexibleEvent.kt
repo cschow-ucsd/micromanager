@@ -1,4 +1,4 @@
-package optaplanner
+package op
 
 interface BaseFlexibleEvent : BaseEvent {
     val type: String

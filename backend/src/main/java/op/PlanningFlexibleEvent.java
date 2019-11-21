@@ -1,15 +1,13 @@
-package optaplanner;
+package op;
 
 import org.jetbrains.annotations.NotNull;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 @PlanningEntity
-public class PlanningFlexibleEvent implements BaseFlexibleEvent {
-    // Planning variable
-    private int startTime;
+public class PlanningFlexibleEvent {
+    private Integer startTime;
 
-    // Event variables
     private String name, type;
     private double longitude, latitude;
     private int duration;
@@ -22,43 +20,54 @@ public class PlanningFlexibleEvent implements BaseFlexibleEvent {
         this.duration = duration;
     }
 
-    public PlanningFlexibleEvent(@NotNull BaseFlexibleEvent e) {
-        this(e.getName(), e.getType(), e.getLongitude(), e.getLatitude(), e.getDuration());
-    }
-
-    public PlannedFixedEvent toPlannedFixedEvent() {
-        return new PlannedFixedEvent(this);
-    }
-
-    @PlanningVariable(valueRangeProviderRefs = {"availableStartTimes"})
+    @PlanningVariable(valueRangeProviderRefs = "availableStartTimes")
     public Integer getStartTime() {
         return startTime;
     }
 
+    public void setStartTime(Integer startTime) {
+        this.startTime = startTime;
+    }
+
     @NotNull
-    @Override
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @NotNull
-    @Override
     public String getType() {
         return type;
     }
 
-    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public double getLongitude() {
         return longitude;
     }
 
-    @Override
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
     public double getLatitude() {
         return latitude;
     }
 
-    @Override
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
     public int getDuration() {
         return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

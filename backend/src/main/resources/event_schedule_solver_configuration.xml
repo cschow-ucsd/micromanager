@@ -3,7 +3,7 @@
     <scanAnnotatedClasses/>
 
     <scoreDirectorFactory>
-        <easyScoreCalculatorClass>optaplanner.ScoreCalculator</easyScoreCalculatorClass>
+        <easyScoreCalculatorClass>op.ScoreCalculator</easyScoreCalculatorClass>
     </scoreDirectorFactory>
 
     <termination>

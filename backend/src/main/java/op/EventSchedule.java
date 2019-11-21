@@ -1,4 +1,4 @@
-package optaplanner;
+package op;
 
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
@@ -6,13 +6,13 @@ import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.drools.ProblemFactCollectionProperty;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
-import org.optaplanner.core.impl.domain.valuerange.buildin.primint.IntValueRange;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @PlanningSolution
 public class EventSchedule {
-    private List<PlanningFlexibleEvent> planningFlexibleEventList;
+    private List<PlanningFlexibleEvent> planningFlexibleEventList = new ArrayList<>();
     private HardSoftScore score;
     private static final int MINS_PER_DAY = 1440;
 
@@ -21,14 +21,26 @@ public class EventSchedule {
         return planningFlexibleEventList;
     }
 
+    public void setPlanningFlexibleEventList(List<PlanningFlexibleEvent> planningFlexibleEventList) {
+        this.planningFlexibleEventList = planningFlexibleEventList;
+    }
+
     @PlanningScore
-    public HardSoftScore getScore(){
+    public HardSoftScore getScore() {
         return score;
+    }
+
+    public void setScore(HardSoftScore score) {
+        this.score = score;
     }
 
     @ValueRangeProvider(id = "availableStartTimes")
     @ProblemFactCollectionProperty
-    public IntValueRange getAvailableStartTimes(){
-        return new IntValueRange(0, MINS_PER_DAY);
+    public List<Integer> getAvailableStartTimes() {
+        List<Integer> startTimes = new ArrayList<>();
+        for (int i = 0; i < MINS_PER_DAY; i++) {
+            startTimes.add(i);
+        }
+        return startTimes;
     }
 }

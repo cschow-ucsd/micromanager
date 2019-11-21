@@ -1,7 +1,7 @@
 package call
 
-import optaplanner.BaseFixedEvent
-import optaplanner.BaseFlexibleEvent
+import op.BaseFixedEvent
+import op.BaseFlexibleEvent
 
 data class MmProblemRequest(
         val fixedEvents: List<BaseFixedEvent>,

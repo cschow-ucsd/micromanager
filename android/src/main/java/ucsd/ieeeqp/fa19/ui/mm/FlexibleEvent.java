@@ -1,6 +1,6 @@
 package ucsd.ieeeqp.fa19.ui.mm;
 
-import optaplanner.BaseFlexibleEvent;
+import op.BaseFlexibleEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class FlexibleEvent implements BaseFlexibleEvent {

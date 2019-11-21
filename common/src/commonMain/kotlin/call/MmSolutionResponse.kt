@@ -1,6 +1,6 @@
 package call
 
-import optaplanner.BaseFixedEvent
+import op.BaseFixedEvent
 
 data class MmSolutionResponse(
         val fixedEvents: List<BaseFixedEvent>,
