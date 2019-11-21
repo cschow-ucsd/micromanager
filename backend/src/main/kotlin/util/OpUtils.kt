@@ -35,8 +35,8 @@ fun MmSolutionEvent.Companion.findSolution(
     find {
         (MmSolutionEvents.mmUserId eq mmUser.id) and (MmSolutionEvents.opPID eq opPID)
     }.forEach {
-        if (it.isOpPlanned) planned.add(it)
-        else fixed.add(it)
+        if (it.isOpPlanned) planned += it
+        else fixed += it
     }
     return MmSolutionResponse(fixed, planned)
 }
