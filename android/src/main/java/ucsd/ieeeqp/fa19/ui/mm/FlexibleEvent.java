@@ -10,8 +10,10 @@ public class FlexibleEvent implements BaseFlexibleEvent {
     private int duration;
     private double longitude;
     private double latitude;
-//    private int recurrences;
-//    private int priority;
+
+    // Alan still has to get these to work
+    // private int recurrences;
+    // private int priority;
 
     public FlexibleEvent(String name, String type, int duration, double longitude, double latitude) {
         this.name = name;
