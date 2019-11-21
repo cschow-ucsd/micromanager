@@ -1,4 +1,4 @@
-package op
+package optaplanner
 
 interface BaseFixedEvent : BaseEvent {
     val endTime: Int

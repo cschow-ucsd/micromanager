@@ -1,4 +1,4 @@
-package op;
+package optaplanner;
 
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
@@ -12,9 +12,18 @@ import java.util.List;
 
 @PlanningSolution
 public class EventSchedule {
-    private List<PlanningFlexibleEvent> planningFlexibleEventList = new ArrayList<>();
+    private List<PlannedFixedEvent> userFixedEventList;
+    private List<PlanningFlexibleEvent> planningFlexibleEventList;
     private HardSoftScore score;
     private static final int MINS_PER_DAY = 1440;
+
+    public EventSchedule(
+            List<PlannedFixedEvent> userFixedEventList,
+            List<PlanningFlexibleEvent> planningFlexibleEventList
+    ) {
+        this.userFixedEventList = userFixedEventList;
+        this.planningFlexibleEventList = planningFlexibleEventList;
+    }
 
     @PlanningEntityCollectionProperty
     public List<PlanningFlexibleEvent> getPlanningFlexibleEventList() {

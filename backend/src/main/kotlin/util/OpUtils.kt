@@ -6,15 +6,19 @@ import exposed.dao.MmUser
 import exposed.dsl.MmSolutionEvents
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import op.*
+import optaplanner.*
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.optaplanner.core.api.solver.SolverFactory
+import org.optaplanner.core.api.solver.Solver
 import java.util.*
 
 fun BaseFlexibleEvent.toPlanning(): PlanningFlexibleEvent {
     return PlanningFlexibleEvent(name, type, longitude, latitude, duration)
+}
+
+fun BaseFixedEvent.toPlannedFixed(): PlannedFixedEvent {
+    return PlannedFixedEvent(name, longitude, latitude, startTime, endTime)
 }
 
 fun PlanningFlexibleEvent.toFixed(): PlannedFixedEvent {
@@ -47,18 +51,18 @@ fun MmSolutionEvent.Companion.getSolutionStatuses(
 }
 
 suspend inline fun MmProblemRequest.solve(
+        solver: Solver<EventSchedule>,
         mmUser: MmUser,
-        onOpPidCreated: (OpPID) -> Unit
-): OpPID {
+        onOpPidCreated: (MmSolveStatus) -> Unit
+): MmSolveStatus {
     val pid = UUID.randomUUID().toString()
-    onOpPidCreated(pid)
+    onOpPidCreated(MmSolveStatus(pid, false))
 
-    // start solving
-    val solverFactory: SolverFactory<EventSchedule> = SolverFactory
-            .createFromXmlResource<EventSchedule>("event_schedule_solver_configuration.xml")
-    val solver = solverFactory.buildSolver()
-    // TODO: Pass in problem to solve
-    val unsolvedEventSchedule = EventSchedule()
+    // solve
+    val unsolvedEventSchedule = EventSchedule(
+            fixedEvents.map { it.toPlannedFixed() },
+            toPlanEvents.map { it.toPlanning() }
+    )
     val solvedEventSchedule = withContext(Dispatchers.IO) {
         solver.solve(unsolvedEventSchedule)
     }
@@ -76,5 +80,5 @@ suspend inline fun MmProblemRequest.solve(
             this[MmSolutionEvents.latitude] = it.latitude
         }
     }
-    return pid
+    return MmSolveStatus(pid, true)
 }

@@ -18,13 +18,19 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
+import optaplanner.EventSchedule
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.optaplanner.core.api.solver.Solver
+import org.optaplanner.core.api.solver.SolverFactory
 import util.findSolution
 import util.getSolutionStatuses
 import util.mmSession
 import util.solve
 
-private val runningOpPIDs: MutableList<OpPID> = mutableListOf()
+private val runningOpPIDs: MutableList<Pair<MmUser, MmSolveStatus>> = mutableListOf()
+private val opSolver: Solver<EventSchedule> = SolverFactory
+        .createFromXmlResource<EventSchedule>("event_schedule_solver_configuration.xml")
+        .buildSolver()
 
 /**
  * Public routes.
@@ -51,18 +57,22 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
             call.handleSession()
             val mmUser = transaction { MmUser[call.mmSession!!.subject] }
             val problem = call.receive<MmProblemRequest>()
-            val opPID = problem.solve(mmUser) {
-                runningOpPIDs += it
-                call.respond(HttpStatusCode.Accepted, MmSolveStatus(it, false))
+            val mmSolveStatus = problem.solve(opSolver, mmUser) {
+                runningOpPIDs += mmUser to it
+                call.respond(HttpStatusCode.Accepted, it)
             }
-            runningOpPIDs -= opPID
+            runningOpPIDs.removeIf { it.second.pid == mmSolveStatus.pid }
         }
         get("/status") {
             call.handleSession()
             val mmUser = transaction { MmUser[call.mmSession!!.subject] }
             val opPIDs = call.receive<OpPIDs>()
-            val statusResponse = transaction { MmSolutionEvent.getSolutionStatuses(mmUser, opPIDs) } +
-                    (runningOpPIDs intersect opPIDs).map { MmSolveStatus(it, false) }
+            val done = transaction { MmSolutionEvent.getSolutionStatuses(mmUser, opPIDs) }
+            val running = mutableListOf<MmSolveStatus>()
+            runningOpPIDs.forEach {
+                if (it.first.id == mmUser.id && opPIDs.contains(it.second.pid)) running.add(it.second)
+            }
+            val statusResponse: List<MmSolveStatus> = done + running
             call.respond(HttpStatusCode.OK, statusResponse)
         }
         get("/solution") {

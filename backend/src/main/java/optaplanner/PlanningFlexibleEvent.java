@@ -1,11 +1,11 @@
-package op;
+package optaplanner;
 
 import org.jetbrains.annotations.NotNull;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 @PlanningEntity
-public class PlanningFlexibleEvent {
+public class PlanningFlexibleEvent implements BaseFlexibleEvent {
     private Integer startTime;
 
     private String name, type;
@@ -29,6 +29,7 @@ public class PlanningFlexibleEvent {
         this.startTime = startTime;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return name;
@@ -38,6 +39,7 @@ public class PlanningFlexibleEvent {
         this.name = name;
     }
 
+    @Override
     @NotNull
     public String getType() {
         return type;
@@ -47,6 +49,7 @@ public class PlanningFlexibleEvent {
         this.type = type;
     }
 
+    @Override
     public double getLongitude() {
         return longitude;
     }
@@ -55,6 +58,7 @@ public class PlanningFlexibleEvent {
         this.longitude = longitude;
     }
 
+    @Override
     public double getLatitude() {
         return latitude;
     }
@@ -63,6 +67,7 @@ public class PlanningFlexibleEvent {
         this.latitude = latitude;
     }
 
+    @Override
     public int getDuration() {
         return duration;
     }

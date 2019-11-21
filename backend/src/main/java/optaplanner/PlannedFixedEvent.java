@@ -1,4 +1,4 @@
-package op;
+package optaplanner;
 
 import org.jetbrains.annotations.NotNull;
 

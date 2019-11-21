@@ -1,4 +1,4 @@
-package op
+package optaplanner
 
 interface BaseEvent {
     val name: String

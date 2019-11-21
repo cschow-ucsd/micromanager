@@ -29,7 +29,7 @@ dependencies {
     compile "org.postgresql:postgresql:42.2.8"
 
     // scheduling
-    implementation 'org.optaplanner:optaplanner-core:7.28.0.Final'
+    implementation('org.optaplanner:optaplanner-core:7.28.0.Final')
 
     // google OAuth
     compile 'com.google.api-client:google-api-client:1.30.2'
