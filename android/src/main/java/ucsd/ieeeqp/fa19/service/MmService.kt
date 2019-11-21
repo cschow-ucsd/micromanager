@@ -32,8 +32,8 @@ class MmService(
 
     fun postProblemAsync(
             problemRequest: MmProblemRequest
-    ): Deferred<MmSolveAccepted> = client.async {
-        client.post<MmSolveAccepted>(route("/api/op-solve"), body = problemRequest)
+    ): Deferred<MmSolveStatus> = client.async {
+        client.post<MmSolveStatus>(route("/api/op-solve"), body = problemRequest)
     }
 
     fun getProblemProgressAsync(

@@ -15,5 +15,5 @@ class MmUser(subject: EntityID<String>) : Entity<String>(subject) {
 
     var email by MmUsers.email
     var refreshToken by MmUsers.refreshToken
-    val opSolutionEvents by MmSolutionEvent referrersOn MmSolutionEvents.mmUser
+    val opSolutionEvents by MmSolutionEvent referrersOn MmSolutionEvents.mmUserId
 }

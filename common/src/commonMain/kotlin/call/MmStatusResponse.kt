@@ -1,3 +1,3 @@
 package call
 
-typealias MmStatusResponse = List<MmSolveAccepted>
+typealias MmStatusResponse = List<MmSolveStatus>

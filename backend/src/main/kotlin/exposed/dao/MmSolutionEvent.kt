@@ -11,7 +11,7 @@ class MmSolutionEvent(id: EntityID<Int>) : IntEntity(id), BaseFixedEvent {
 
     var opPID by MmSolutionEvents.opPID
     var isOpPlanned by MmSolutionEvents.isOpPlanned
-    var mmUser by MmUser referencedOn MmSolutionEvents.mmUser
+    var mmUser by MmUser referencedOn MmSolutionEvents.mmUserId
 
     // event details
     override var name: String by MmSolutionEvents.name

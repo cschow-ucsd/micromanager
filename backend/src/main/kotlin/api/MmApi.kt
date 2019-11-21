@@ -1,11 +1,11 @@
 package api
 
 import call.MmProblemRequest
-import call.MmSolutionResponse
+import call.MmSolveStatus
 import call.OpPID
 import call.OpPIDs
 import exposed.dao.MmSolutionEvent
-import exposed.dsl.MmSolutionEvents
+import exposed.dao.MmUser
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
@@ -18,10 +18,13 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
-import op.BaseFixedEvent
-import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
+import util.findSolution
+import util.getSolutionStatuses
 import util.mmSession
+import util.solve
+
+private val runningOpPIDs: MutableList<OpPID> = mutableListOf()
 
 /**
  * Public routes.
@@ -46,38 +49,28 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
         }
         post("/op-solve") {
             call.handleSession()
+            val mmUser = transaction { MmUser[call.mmSession!!.subject] }
             val problem = call.receive<MmProblemRequest>()
-            TODO("solve the problem asynchronously, return an 202 Accepted response")
-//            call.respond(
-//                    status = HttpStatusCode.Accepted,
-//                    message = MmSolveAccepted(TODO(), TODO())
-//            )
+            val opPID = problem.solve(mmUser) {
+                runningOpPIDs += it
+                call.respond(HttpStatusCode.Accepted, MmSolveStatus(it, false))
+            }
+            runningOpPIDs -= opPID
         }
         get("/status") {
             call.handleSession()
-            val mmPIDs = call.receive<OpPIDs>()
-            TODO("retrieve status of the problems with list of PIDs")
-//            val response: MmStatusResponse = mmPIDs.map {
-//                MmSolveAccepted(TODO(), TODO())
-//            }
-//            call.respond(
-//                    status = HttpStatusCode.Accepted,
-//                    message = response
-//            )
+            val mmUser = transaction { MmUser[call.mmSession!!.subject] }
+            val opPIDs = call.receive<OpPIDs>()
+            val statusResponse = transaction { MmSolutionEvent.getSolutionStatuses(mmUser, opPIDs) } +
+                    (runningOpPIDs intersect opPIDs).map { MmSolveStatus(it, false) }
+            call.respond(HttpStatusCode.OK, statusResponse)
         }
         get("/solution") {
             call.handleSession()
-            val subject = call.mmSession!!.subject
+            val mmUser = transaction { MmUser[call.mmSession!!.subject] }
             val opPID = call.receive<OpPID>()
-            val fixedEvents = mutableListOf<BaseFixedEvent>()
-            val plannedEvents = mutableListOf<BaseFixedEvent>()
-            transaction {
-                MmSolutionEvent.find { (MmSolutionEvents.mmUser eq subject) and (MmSolutionEvents.opPID eq opPID) }
-            }.forEach {
-                if (it.isOpPlanned) plannedEvents.add(it)
-                else fixedEvents.add(it)
-            }
-            call.respond(HttpStatusCode.OK, MmSolutionResponse(fixedEvents, plannedEvents))
+            val solution = transaction { MmSolutionEvent.findSolution(mmUser, opPID) }
+            call.respond(HttpStatusCode.OK, solution)
         }
     }
 }
