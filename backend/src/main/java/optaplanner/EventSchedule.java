@@ -12,13 +12,13 @@ import java.util.List;
 
 @PlanningSolution
 public class EventSchedule {
-    private List<PlannedFixedEvent> userFixedEventList;
+    private List<BaseFixedEvent> userFixedEventList;
     private List<PlanningFlexibleEvent> planningFlexibleEventList;
     private HardSoftScore score;
     private static final int MINS_PER_DAY = 1440;
 
     public EventSchedule(
-            List<PlannedFixedEvent> userFixedEventList,
+            List<BaseFixedEvent> userFixedEventList,
             List<PlanningFlexibleEvent> planningFlexibleEventList
     ) {
         this.userFixedEventList = userFixedEventList;
