@@ -2,7 +2,9 @@
     <string name="app_name">android</string>
     <string name="hello">Hello from strings.xml</string>
     <string name="oauth_client_id">168037840247-anu4hfobuqucmnpfsflvfbnrgjcp4m9i.apps.googleusercontent.com</string>
-    <string name="nav_schedule">Schedule</string>
+    <string name="nav_schedules">Schedule</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_results">Results</string>
+    <string name="status_done">Status: Done</string>
+    <string name="status_running">Status: Running</string>
 </resources>

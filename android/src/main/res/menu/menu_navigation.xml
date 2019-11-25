@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/item_schedule"
+        android:id="@+id/menu_item_schedules"
         android:icon="@drawable/ic_access_time_black_24dp"
-        android:title="@string/nav_schedule" />
+        android:title="@string/nav_schedules" />
 
     <item
-        android:id="@+id/item_results"
+        android:id="@+id/menu_item_results"
         android:icon="@drawable/ic_done_black_24dp"
         android:title="@string/nav_results" />
 
     <item
-        android:id="@+id/item_settings"
+        android:id="@+id/menu_item_settings"
         android:icon="@drawable/ic_settings_black_24dp"
         android:title="@string/nav_settings" />
 </menu>
