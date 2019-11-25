@@ -1,9 +1,11 @@
 package ucsd.ieeeqp.fa19.ui.mm;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import optaplanner.BaseFlexibleEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexibleEvent implements BaseFlexibleEvent {
+public class FlexibleEvent implements BaseFlexibleEvent, Parcelable {
 
     private String name;
     private String type;
@@ -49,4 +51,39 @@ public class FlexibleEvent implements BaseFlexibleEvent {
     public double getLatitude() {
         return latitude;
     }
+
+    protected FlexibleEvent(Parcel in) {
+        name = in.readString();
+        type = in.readString();
+        duration = in.readInt();
+        longitude = in.readDouble();
+        latitude = in.readDouble();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(type);
+        dest.writeInt(duration);
+        dest.writeDouble(longitude);
+        dest.writeDouble(latitude);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<FlexibleEvent> CREATOR = new Parcelable.Creator<FlexibleEvent>() {
+        @Override
+        public FlexibleEvent createFromParcel(Parcel in) {
+            return new FlexibleEvent(in);
+        }
+
+        @Override
+        public FlexibleEvent[] newArray(int size) {
+            return new FlexibleEvent[size];
+        }
+    };
 }

@@ -50,7 +50,7 @@ public class ScheduleFragment extends Fragment {
 
     private void setupRecyclerView(RecyclerView recyclerView) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new RecyclerViewAdapter(flexibleEvents);
+        adapter = new NewScheduleAdapter(flexibleEvents);
         recyclerView.setAdapter(adapter);
     }
 

@@ -6,25 +6,25 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import optaplanner.BaseFlexibleEvent;
+import org.jetbrains.annotations.NotNull;
 import ucsd.ieeeqp.fa19.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
-    private List<BaseFlexibleEvent> events = new ArrayList<>();
+public class NewScheduleAdapter extends RecyclerView.Adapter<NewScheduleAdapter.NewScheduleViewHolder> {
+    private List<BaseFlexibleEvent> events;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class NewScheduleViewHolder extends RecyclerView.ViewHolder {
         TextView name;
         TextView type;
         TextView duration;
         TextView longitude;
         TextView latitude;
 
-        public MyViewHolder(View v) {
+        public NewScheduleViewHolder(View v) {
             super(v);
             name = v.findViewById(R.id.name);
             type = v.findViewById(R.id.type);
@@ -35,25 +35,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public RecyclerViewAdapter(List<BaseFlexibleEvent> myEvents) {
+    public NewScheduleAdapter(List<BaseFlexibleEvent> myEvents) {
         events = myEvents;
     }
 
-    // Create new views (invoked by the layout manager)
+    @NotNull
     @Override
-    public RecyclerViewAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                                               int viewType) {
-        // create a new view
-        TextView v = (TextView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_event, parent, false);
-
-        MyViewHolder vh = new MyViewHolder(v);
-        return vh;
+    public NewScheduleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View rootView = inflater.inflate(R.layout.item_event, parent, false);
+        return new NewScheduleViewHolder(rootView);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(NewScheduleViewHolder holder, int position) {
         holder.name.setText(events.get(position).getName());
         holder.type.setText(events.get(position).getType());
         holder.duration.setText(events.get(position).getDuration());

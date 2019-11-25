@@ -66,8 +66,9 @@ public class AllSchedulesFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == RC_NEW_SCHEDULE && resultCode == Activity.RESULT_OK) {
-            data.getParcelableArrayListExtra("");
+        if (requestCode == RC_NEW_SCHEDULE && resultCode == Activity.RESULT_OK && data != null) {
+            List<FlexibleEvent> toPlanEvents = data.getParcelableArrayListExtra("");
+            // TODO: get problem from
         }
     }
 
