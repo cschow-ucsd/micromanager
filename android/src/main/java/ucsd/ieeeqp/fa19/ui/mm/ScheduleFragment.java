@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import optaplanner.BaseFlexibleEvent;
 import ucsd.ieeeqp.fa19.R;
 
@@ -27,9 +29,34 @@ public class ScheduleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         // TODO: display events on the screen with RecyclerView
 
-        // TODO: use view.findViewById() to get the floating action button (refer to MainActivity if you forgot how to do that)
+
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        FloatingActionButton newEventButton = view.findViewById(R.id.fab_schedule_newevent);
         // TODO: Set a listener on the FAB and launch NewEventFragment when clicked
+        newEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NewEventFragment fragment = setupNewEventFragment();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.viewpager_nav_container, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
         // TODO: Set a NewEventListener on the NewEventFragment to get the event from the fragment and add it to events after the event is submitted)
+    }
+
+    private NewEventFragment setupNewEventFragment() {
+        NewEventFragment fragment = new NewEventFragment();
+        fragment.setNewEventListener(new NewEventFragment.NewEventListener() {
+            @Override
+            public void onEventSubmitted(BaseFlexibleEvent event) {
+                flexibleEvents.add(event);
+                RecyclerViewAdapter mAdapter = new RecyclerViewAdapter(flexibleEvents);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+        return fragment;
     }
 }
 
