@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import optaplanner.BaseFlexibleEvent;
@@ -17,6 +18,7 @@ import java.util.List;
 
 public class ScheduleFragment extends Fragment {
     private List<BaseFlexibleEvent> flexibleEvents = new ArrayList<>();
+    private RecyclerView.Adapter adapter;
 
     @Nullable
     @Override
@@ -31,8 +33,9 @@ public class ScheduleFragment extends Fragment {
 
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        setupRecyclerView(recyclerView);
         FloatingActionButton newEventButton = view.findViewById(R.id.fab_schedule_newevent);
-        // TODO: Set a listener on the FAB and launch NewEventFragment when clicked
+
         newEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,7 +46,12 @@ public class ScheduleFragment extends Fragment {
                         .commit();
             }
         });
-        // TODO: Set a NewEventListener on the NewEventFragment to get the event from the fragment and add it to events after the event is submitted)
+    }
+
+    private void setupRecyclerView(RecyclerView recyclerView) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new RecyclerViewAdapter(flexibleEvents);
+        recyclerView.setAdapter(adapter);
     }
 
     private NewEventFragment setupNewEventFragment() {
@@ -52,8 +60,7 @@ public class ScheduleFragment extends Fragment {
             @Override
             public void onEventSubmitted(BaseFlexibleEvent event) {
                 flexibleEvents.add(event);
-                RecyclerViewAdapter mAdapter = new RecyclerViewAdapter(flexibleEvents);
-                mAdapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
             }
         });
         return fragment;
