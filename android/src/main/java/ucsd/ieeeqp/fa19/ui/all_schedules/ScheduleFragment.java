@@ -1,4 +1,4 @@
-package ucsd.ieeeqp.fa19.ui.mm;
+package ucsd.ieeeqp.fa19.ui.all_schedules;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import optaplanner.BaseFlexibleEvent;
 import ucsd.ieeeqp.fa19.R;
+import ucsd.ieeeqp.fa19.ui.new_schedule.NewEventFragment;
+import ucsd.ieeeqp.fa19.ui.new_schedule.NewScheduleAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

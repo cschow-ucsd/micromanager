@@ -11,6 +11,9 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import ucsd.ieeeqp.fa19.R;
+import ucsd.ieeeqp.fa19.ui.all_schedules.AllSchedulesFragment;
+import ucsd.ieeeqp.fa19.ui.all_schedules.ResultsFragment;
+import ucsd.ieeeqp.fa19.ui.all_schedules.SettingsFragment;
 
 public class NavigationFragment extends Fragment {
     private ViewPager viewPager;
@@ -27,7 +30,8 @@ public class NavigationFragment extends Fragment {
         BottomNavigationView navigationView = view.findViewById(R.id.bottomnav_nav_nav);
         navigationView.setOnNavigationItemSelectedListener(this::handleMenuItemSelected);
         viewPager = view.findViewById(R.id.viewpager_nav_container);
-        viewPager.setAdapter(new NavigationPagerAdapter(getChildFragmentManager()));
+        viewPager.setAdapter(new NoSwipePagerAdapter(getChildFragmentManager(),
+                new AllSchedulesFragment(), new ResultsFragment(), new SettingsFragment()));
     }
 
     private boolean handleMenuItemSelected(MenuItem menuItem) {

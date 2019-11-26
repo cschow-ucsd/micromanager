@@ -1,10 +1,12 @@
 package ucsd.ieeeqp.fa19.viewmodel;
 
 import android.app.Application;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import call.MmProblemRequest;
 import call.MmSolveStatus;
 import kotlinx.coroutines.future.FutureKt;
 import ucsd.ieeeqp.fa19.service.MmService;
@@ -21,7 +23,7 @@ public class MmServiceViewModel extends AndroidViewModel {
     private MmService mmService;
     private MutableLiveData<Integer> mmLoginStateLiveData = new MutableLiveData<>(NOT_LOGGED_IN);
     private MutableLiveData<List<MmSolveStatus>> mmSolveStatusLiveData = new MutableLiveData<>(null);
-    private Timer queryTimer = new Timer();
+    private Timer queryTimer;
 
     public MmServiceViewModel(@NonNull Application application) {
         super(application);
@@ -54,6 +56,10 @@ public class MmServiceViewModel extends AndroidViewModel {
     }
 
     public void startQueryAllStatuses() {
+        if (queryTimer != null) {
+            queryTimer.cancel();
+        }
+        queryTimer = new Timer();
         queryTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -62,12 +68,21 @@ public class MmServiceViewModel extends AndroidViewModel {
         }, 0, QUERY_PERIOD);
     }
 
-    public void queryAllStatuses() {
+    private void queryAllStatuses() {
         CompletableFuture<List<MmSolveStatus>> future = FutureKt.asCompletableFuture(mmService.getAllProgressAsync());
         future.handleAsync((result, exception) -> {
             if (exception != null) {
                 mmSolveStatusLiveData.postValue(result);
             }
+            return null;
+        });
+    }
+
+    public void submitUnsolvedSchedule(MmProblemRequest request) {
+        CompletableFuture<MmSolveStatus> future = FutureKt.asCompletableFuture(mmService.solveProblemAsync(request));
+        future.handleAsync((result, exception) -> {
+            String message = (exception == null) ? "Solve accepted; ID: " + result.getPid() : exception.getMessage();
+            Toast.makeText(getApplication(), message, Toast.LENGTH_SHORT).show();
             return null;
         });
     }
@@ -83,6 +98,8 @@ public class MmServiceViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         invalidateService();
-        queryTimer.cancel();
+        if (queryTimer != null) {
+            queryTimer.cancel();
+        }
     }
 }

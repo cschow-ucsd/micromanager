@@ -12,4 +12,7 @@
     <string name="latitude">TextView</string>
     <string name="status_done">Status: Done</string>
     <string name="status_running">Status: Running</string>
+    <string name="schedule_new_previous">Previous</string>
+    <string name="schedule_new_next">Next</string>
+    <string name="schedule_new_submit">Submit</string>
 </resources>

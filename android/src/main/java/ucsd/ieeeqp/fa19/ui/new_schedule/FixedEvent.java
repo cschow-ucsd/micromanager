@@ -1,4 +1,4 @@
-package ucsd.ieeeqp.fa19.ui.mm;
+package ucsd.ieeeqp.fa19.ui.new_schedule;
 
 import android.os.Parcel;
 import android.os.Parcelable;

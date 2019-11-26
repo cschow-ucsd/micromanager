@@ -1,4 +1,4 @@
-package ucsd.ieeeqp.fa19.ui.mm;
+package ucsd.ieeeqp.fa19.ui.all_schedules;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,20 +12,23 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import call.MmProblemRequest;
 import call.MmSolveStatus;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import ucsd.ieeeqp.fa19.R;
+import ucsd.ieeeqp.fa19.ui.new_schedule.FixedEvent;
+import ucsd.ieeeqp.fa19.ui.new_schedule.FlexibleEvent;
+import ucsd.ieeeqp.fa19.ui.new_schedule.NewScheduleActivity;
 import ucsd.ieeeqp.fa19.viewmodel.MmServiceViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 public class AllSchedulesFragment extends Fragment {
     private static final int RC_NEW_SCHEDULE = 7984;
     private List<MmSolveStatus> statuses = new ArrayList<>();
-    private Timer queryTimer = new Timer();
     private RecyclerView.Adapter adapter;
+    private MmServiceViewModel mmServiceViewModel;
 
     @Nullable
     @Override
@@ -47,15 +50,15 @@ public class AllSchedulesFragment extends Fragment {
     }
 
     private void setupQueryProblemStatuses() {
-        MmServiceViewModel model = ViewModelProviders.of(getActivity()).get(MmServiceViewModel.class);
-        model.getMmSolveStatusLiveData().observe(this, mmSolveStatuses -> {
+        mmServiceViewModel = ViewModelProviders.of(getActivity()).get(MmServiceViewModel.class);
+        mmServiceViewModel.getMmSolveStatusLiveData().observe(this, mmSolveStatuses -> {
             if (mmSolveStatuses != null) {
                 statuses.clear();
                 statuses.addAll(mmSolveStatuses);
                 adapter.notifyDataSetChanged();
             }
         });
-        model.startQueryAllStatuses();
+        mmServiceViewModel.startQueryAllStatuses();
     }
 
     private void setupRecyclerView(RecyclerView recyclerView) {
@@ -67,14 +70,9 @@ public class AllSchedulesFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == RC_NEW_SCHEDULE && resultCode == Activity.RESULT_OK && data != null) {
-            List<FlexibleEvent> toPlanEvents = data.getParcelableArrayListExtra("");
-            // TODO: get problem from
+            List<FixedEvent> userFixedEvents = data.getParcelableArrayListExtra(NewScheduleActivity.FIXED_EXTRA);
+            List<FlexibleEvent> toPlanEvents = data.getParcelableArrayListExtra(NewScheduleActivity.FLEXIBLE_EXTRA);
+            mmServiceViewModel.submitUnsolvedSchedule(new MmProblemRequest(userFixedEvents, toPlanEvents));
         }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        queryTimer.cancel();
     }
 }

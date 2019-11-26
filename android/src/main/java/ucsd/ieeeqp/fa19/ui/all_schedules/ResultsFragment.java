@@ -1,4 +1,4 @@
-package ucsd.ieeeqp.fa19.ui.mm;
+package ucsd.ieeeqp.fa19.ui.all_schedules;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
