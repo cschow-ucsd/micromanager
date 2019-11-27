@@ -7,6 +7,7 @@ public class DistanceHelper {
 
     public List<LocationDistance> getPossibleDistances() {
         // TODO: call the distance api to get travel between all possible longitudes and latitudes
+        return null;
     }
 
     class LocationDistance {

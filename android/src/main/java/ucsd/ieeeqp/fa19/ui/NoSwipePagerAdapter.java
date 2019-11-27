@@ -1,4 +1,4 @@
-package ucsd.ieeeqp.fa19.ui.login;
+package ucsd.ieeeqp.fa19.ui;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

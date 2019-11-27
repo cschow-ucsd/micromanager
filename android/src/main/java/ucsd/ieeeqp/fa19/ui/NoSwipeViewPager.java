@@ -1,4 +1,4 @@
-package ucsd.ieeeqp.fa19.ui.login;
+package ucsd.ieeeqp.fa19.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -8,12 +8,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
 
-public class NavigationViewPager extends ViewPager {
-    public NavigationViewPager(@NonNull Context context) {
+public class NoSwipeViewPager extends ViewPager {
+    public NoSwipeViewPager(@NonNull Context context) {
         super(context);
     }
 
-    public NavigationViewPager(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public NoSwipeViewPager(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 

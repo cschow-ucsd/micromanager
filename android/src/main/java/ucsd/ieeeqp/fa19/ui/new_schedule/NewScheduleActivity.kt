@@ -8,7 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_new_schedule.*
 import ucsd.ieeeqp.fa19.R
-import ucsd.ieeeqp.fa19.ui.login.NoSwipePagerAdapter
+import ucsd.ieeeqp.fa19.ui.NoSwipePagerAdapter
 import ucsd.ieeeqp.fa19.viewmodel.NewScheduleViewModel
 
 class NewScheduleActivity : AppCompatActivity() {
@@ -29,7 +29,7 @@ class NewScheduleActivity : AppCompatActivity() {
                         else R.string.schedule_new_next
                 )
             }
-            inputPagerAdapter.count -> submitAndClose()
+            inputPagerAdapter.count -> submitAndFinish()
             else -> throw IllegalStateException("Invalid input stage.")
         }
     }
@@ -49,7 +49,7 @@ class NewScheduleActivity : AppCompatActivity() {
         newScheduleViewModel.inputStageLiveData.observe(this, stageObserver)
     }
 
-    private fun submitAndClose() {
+    private fun submitAndFinish() {
         val resultIntent = Intent()
         resultIntent.putParcelableArrayListExtra(FIXED_EXTRA, newScheduleViewModel.fixedEventsLiveData.value)
         resultIntent.putParcelableArrayListExtra(FLEXIBLE_EXTRA, newScheduleViewModel.flexibleEventsLiveData.value)

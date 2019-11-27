@@ -26,11 +26,11 @@ public class NewScheduleAdapter extends RecyclerView.Adapter<NewScheduleAdapter.
 
         public NewScheduleViewHolder(View v) {
             super(v);
-            name = v.findViewById(R.id.name);
-            type = v.findViewById(R.id.type);
-            duration = v.findViewById(R.id.duration);
-            longitude = v.findViewById(R.id.longitude);
-            latitude = v.findViewById(R.id.latitude);
+            name = v.findViewById(R.id.textview_flexibleitem_name);
+            type = v.findViewById(R.id.textview_flexibleitem_starttime);
+            duration = v.findViewById(R.id.textview_flexibleitem_duration);
+            longitude = v.findViewById(R.id.textview_flexibleitem_longitude);
+            latitude = v.findViewById(R.id.textview_flexibleitem_latitude);
         }
     }
 
@@ -43,7 +43,7 @@ public class NewScheduleAdapter extends RecyclerView.Adapter<NewScheduleAdapter.
     @Override
     public NewScheduleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View rootView = inflater.inflate(R.layout.item_event, parent, false);
+        View rootView = inflater.inflate(R.layout.flexibleitem_event, parent, false);
         return new NewScheduleViewHolder(rootView);
     }
 

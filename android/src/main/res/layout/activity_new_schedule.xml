@@ -40,7 +40,7 @@
         app:constraint_referenced_ids="button_newschedule_previous,button_newschedule_submit"
         tools:layout_editor_absoluteY="731dp" />
 
-    <androidx.viewpager.widget.ViewPager
+    <ucsd.ieeeqp.fa19.ui.NoSwipeViewPager
         android:id="@+id/viewpager_newschedule_container"
         android:layout_width="0dp"
         android:layout_height="0dp"

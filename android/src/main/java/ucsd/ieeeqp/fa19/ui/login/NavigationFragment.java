@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import ucsd.ieeeqp.fa19.R;
+import ucsd.ieeeqp.fa19.ui.NoSwipePagerAdapter;
 import ucsd.ieeeqp.fa19.ui.all_schedules.AllSchedulesFragment;
 import ucsd.ieeeqp.fa19.ui.all_schedules.ResultsFragment;
 import ucsd.ieeeqp.fa19.ui.all_schedules.SettingsFragment;

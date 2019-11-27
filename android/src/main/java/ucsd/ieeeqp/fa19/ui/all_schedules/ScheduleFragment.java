@@ -58,12 +58,9 @@ public class ScheduleFragment extends Fragment {
 
     private NewEventFragment setupNewEventFragment() {
         NewEventFragment fragment = new NewEventFragment();
-        fragment.setNewEventListener(new NewEventFragment.NewEventListener() {
-            @Override
-            public void onEventSubmitted(BaseFlexibleEvent event) {
-                flexibleEvents.add(event);
-                adapter.notifyDataSetChanged();
-            }
+        fragment.setNewEventListener(event -> {
+            flexibleEvents.add(event);
+            adapter.notifyDataSetChanged();
         });
         return fragment;
     }

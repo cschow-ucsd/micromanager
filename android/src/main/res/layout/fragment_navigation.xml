@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ucsd.ieeeqp.fa19.ui.login.NavigationViewPager
+    <ucsd.ieeeqp.fa19.ui.NoSwipeViewPager
         android:id="@+id/viewpager_nav_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
