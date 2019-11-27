@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+    <scanAnnotatedClasses>
+        <packageInclude>optaplanner</packageInclude>
+    </scanAnnotatedClasses>
+
+    <scoreDirectorFactory>
+        <easyScoreCalculatorClass>optaplanner.ScoreCalculator</easyScoreCalculatorClass>
+    </scoreDirectorFactory>
+
+    <termination>
+        <secondsSpentLimit>10</secondsSpentLimit>
+    </termination>
+</solver>

@@ -16,23 +16,32 @@ public class EventSchedule {
     private List<PlanningFlexibleEvent> planningFlexibleEventList;
     private HardSoftScore score;
     private static final int MINS_PER_DAY = 1440;
+    private BaseUserPreferences userPreferences;
+
 
     public EventSchedule(
             List<BaseFixedEvent> userFixedEventList,
-            List<PlanningFlexibleEvent> planningFlexibleEventList
+            List<PlanningFlexibleEvent> planningFlexibleEventList,
+            BaseUserPreferences userPreferences
     ) {
         this.userFixedEventList = userFixedEventList;
         this.planningFlexibleEventList = planningFlexibleEventList;
+        this.userPreferences = userPreferences;
     }
 
     // default constructor for optaplanner
     public EventSchedule() {
-        this(new ArrayList<>(), new ArrayList<>());
+        this(new ArrayList<>(), new ArrayList<>(), new BaseUserPreferences(0, 0, 0, 0, 0
+        ,0 ,0 ,0));
     }
 
     @PlanningEntityCollectionProperty
     public List<PlanningFlexibleEvent> getPlanningFlexibleEventList() {
         return planningFlexibleEventList;
+    }
+
+    public List<BaseFixedEvent> getUserFixedEventList(){
+        return userFixedEventList;
     }
 
     public void setPlanningFlexibleEventList(List<PlanningFlexibleEvent> planningFlexibleEventList) {
@@ -42,6 +51,10 @@ public class EventSchedule {
     @PlanningScore
     public HardSoftScore getScore() {
         return score;
+    }
+
+    public BaseUserPreferences getUserPreferences(){
+        return userPreferences;
     }
 
     public void setScore(HardSoftScore score) {
