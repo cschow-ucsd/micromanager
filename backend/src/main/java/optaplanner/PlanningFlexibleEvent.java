@@ -20,6 +20,10 @@ public class PlanningFlexibleEvent implements BaseFlexibleEvent {
         this.duration = duration;
     }
 
+    public PlanningFlexibleEvent(){
+        this("","",0.0,0.0,0);
+    }
+
     @PlanningVariable(valueRangeProviderRefs = "availableStartTimes")
     public Integer getStartTime() {
         return startTime;

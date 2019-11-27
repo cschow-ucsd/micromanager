@@ -6,10 +6,7 @@ import exposed.dao.MmUser
 import exposed.dsl.MmSolutionEvents
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import optaplanner.BaseFixedEvent
-import optaplanner.BaseFlexibleEvent
-import optaplanner.EventSchedule
-import optaplanner.PlanningFlexibleEvent
+import optaplanner.*
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -18,6 +15,10 @@ import java.util.*
 
 fun BaseFlexibleEvent.toPlanning(): PlanningFlexibleEvent {
     return PlanningFlexibleEvent(name, type, longitude, latitude, duration)
+}
+
+fun PlanningFlexibleEvent.toPlannedFixed(): PlannedFixedEvent {
+    return PlannedFixedEvent(name, longitude, latitude, startTime, startTime + duration)
 }
 
 fun MmSolutionEvent.Companion.findSolution(
@@ -54,7 +55,7 @@ suspend inline fun MmProblemRequest.solve(
 
     // solve
     val unsolvedEventSchedule = EventSchedule(
-            fixedEvents, toPlanEvents.map { it.toPlanning() }
+            fixedEvents, toPlanEvents.map { it.toPlanning() }, userPreferences
     )
     val solvedEventSchedule = withContext(Dispatchers.Default) {
         solver.solve(unsolvedEventSchedule)
