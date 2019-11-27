@@ -48,11 +48,9 @@ fun Route.mmPublicApi() {
 fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
     route("/api") {
         get("/login") {
-            call.handleSession()
             call.respond(HttpStatusCode.OK)
         }
         post("/op-solve") {
-            call.handleSession()
             val mmUser = transaction { MmUser[call.mmSession!!.subject] }
             val problem = call.receive<MmProblemRequest>()
             val mmSolveStatus = problem.solve(opSolverFactory.buildSolver(), mmUser) {
@@ -63,7 +61,6 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
         }
         route("/status") {
             get("/all") {
-                call.handleSession()
                 val mmUser = transaction { MmUser[call.mmSession!!.subject] }
                 val userOpPIDs: OpPIDs = mmUser.opSolutionEvents.map { it.opPID }
                 val done = transaction { MmSolutionEvent.getSolutionStatuses(mmUser, userOpPIDs) }
@@ -75,7 +72,6 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
                 call.respond(HttpStatusCode.OK, statusResponse)
             }
             get("/ids") {
-                call.handleSession()
                 val mmUser = transaction { MmUser[call.mmSession!!.subject] }
                 val opPIDs = call.receive<OpPIDs>()
                 val done = transaction { MmSolutionEvent.getSolutionStatuses(mmUser, opPIDs) }
@@ -88,7 +84,6 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
             }
         }
         get("/solution") {
-            call.handleSession()
             val mmUser = transaction { MmUser[call.mmSession!!.subject] }
             val opPID = call.receive<OpPID>()
             val solution = transaction { MmSolutionEvent.findSolution(mmUser, opPID) }
