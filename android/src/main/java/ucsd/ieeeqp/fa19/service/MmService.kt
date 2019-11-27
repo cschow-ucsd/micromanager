@@ -30,7 +30,7 @@ class MmService(
         response.status == HttpStatusCode.OK
     }
 
-    fun postProblemAsync(
+    fun solveProblemAsync(
             problemRequest: MmProblemRequest
     ): Deferred<MmSolveStatus> = client.async {
         client.post<MmSolveStatus>(route("/api/op-solve"), body = problemRequest)
@@ -39,7 +39,11 @@ class MmService(
     fun getProblemProgressAsync(
             opPIDs: OpPIDs
     ): Deferred<MmStatusResponse> = client.async {
-        client.get<MmStatusResponse>(route("/api/status"), body = opPIDs)
+        client.get<MmStatusResponse>(route("/api/status/ids"), body = opPIDs)
+    }
+
+    fun getAllProgressAsync(): Deferred<MmStatusResponse> = client.async {
+        client.get<MmStatusResponse>(route("/api/status/all"))
     }
 
     fun getSolutionAsync(

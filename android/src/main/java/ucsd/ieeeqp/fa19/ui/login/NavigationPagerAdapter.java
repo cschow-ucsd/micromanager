@@ -4,12 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import ucsd.ieeeqp.fa19.ui.mm.AllSchedulesFragment;
 import ucsd.ieeeqp.fa19.ui.mm.ResultsFragment;
-import ucsd.ieeeqp.fa19.ui.mm.ScheduleFragment;
 import ucsd.ieeeqp.fa19.ui.mm.SettingsFragment;
 
 public class NavigationPagerAdapter extends FragmentPagerAdapter {
-    private static final Fragment[] fragments = {new ScheduleFragment(), new ResultsFragment(), new SettingsFragment()};
+    private static final Fragment[] fragments = {new AllSchedulesFragment(), new ResultsFragment(), new SettingsFragment()};
 
     public NavigationPagerAdapter(@NonNull FragmentManager fm) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);

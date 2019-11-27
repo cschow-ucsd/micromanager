@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import optaplanner.BaseFlexibleEvent;
 import ucsd.ieeeqp.fa19.R;
 
@@ -15,6 +18,7 @@ import java.util.List;
 
 public class ScheduleFragment extends Fragment {
     private List<BaseFlexibleEvent> flexibleEvents = new ArrayList<>();
+    private RecyclerView.Adapter adapter;
 
     @Nullable
     @Override
@@ -27,9 +31,39 @@ public class ScheduleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         // TODO: display events on the screen with RecyclerView
 
-        // TODO: use view.findViewById() to get the floating action button (refer to MainActivity if you forgot how to do that)
-        // TODO: Set a listener on the FAB and launch NewEventFragment when clicked
-        // TODO: Set a NewEventListener on the NewEventFragment to get the event from the fragment and add it to events after the event is submitted)
+
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        setupRecyclerView(recyclerView);
+        FloatingActionButton newEventButton = view.findViewById(R.id.fab_schedule_newevent);
+
+        newEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NewEventFragment fragment = setupNewEventFragment();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.viewpager_nav_container, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+    }
+
+    private void setupRecyclerView(RecyclerView recyclerView) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new NewScheduleAdapter(flexibleEvents);
+        recyclerView.setAdapter(adapter);
+    }
+
+    private NewEventFragment setupNewEventFragment() {
+        NewEventFragment fragment = new NewEventFragment();
+        fragment.setNewEventListener(new NewEventFragment.NewEventListener() {
+            @Override
+            public void onEventSubmitted(BaseFlexibleEvent event) {
+                flexibleEvents.add(event);
+                adapter.notifyDataSetChanged();
+            }
+        });
+        return fragment;
     }
 }
 

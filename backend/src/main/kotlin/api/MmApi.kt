@@ -61,17 +61,31 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
             }
             runningOpPIDs.removeIf { it.second.pid == mmSolveStatus.pid }
         }
-        get("/status") {
-            call.handleSession()
-            val mmUser = transaction { MmUser[call.mmSession!!.subject] }
-            val opPIDs = call.receive<OpPIDs>()
-            val done = transaction { MmSolutionEvent.getSolutionStatuses(mmUser, opPIDs) }
-            val running = mutableListOf<MmSolveStatus>()
-            runningOpPIDs.forEach {
-                if (it.first.id == mmUser.id && opPIDs.contains(it.second.pid)) running.add(it.second)
+        route("/status") {
+            get("/all") {
+                call.handleSession()
+                val mmUser = transaction { MmUser[call.mmSession!!.subject] }
+                val userOpPIDs: OpPIDs = mmUser.opSolutionEvents.map { it.opPID }
+                val done = transaction { MmSolutionEvent.getSolutionStatuses(mmUser, userOpPIDs) }
+                val running = mutableListOf<MmSolveStatus>()
+                runningOpPIDs.forEach {
+                    if (it.first.id == mmUser.id) running.add(it.second)
+                }
+                val statusResponse: List<MmSolveStatus> = done + running
+                call.respond(HttpStatusCode.OK, statusResponse)
             }
-            val statusResponse: List<MmSolveStatus> = done + running
-            call.respond(HttpStatusCode.OK, statusResponse)
+            get("/ids") {
+                call.handleSession()
+                val mmUser = transaction { MmUser[call.mmSession!!.subject] }
+                val opPIDs = call.receive<OpPIDs>()
+                val done = transaction { MmSolutionEvent.getSolutionStatuses(mmUser, opPIDs) }
+                val running = mutableListOf<MmSolveStatus>()
+                runningOpPIDs.forEach {
+                    if (it.first.id == mmUser.id && opPIDs.contains(it.second.pid)) running.add(it.second)
+                }
+                val statusResponse: List<MmSolveStatus> = done + running
+                call.respond(HttpStatusCode.OK, statusResponse)
+            }
         }
         get("/solution") {
             call.handleSession()
