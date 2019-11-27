@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import call.MmProblemRequest;
 import call.MmSolveStatus;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import optaplanner.BaseUserPreferences;
 import ucsd.ieeeqp.fa19.R;
 import ucsd.ieeeqp.fa19.ui.new_schedule.FixedEvent;
 import ucsd.ieeeqp.fa19.ui.new_schedule.FlexibleEvent;
@@ -72,7 +73,8 @@ public class AllSchedulesFragment extends Fragment {
         if (requestCode == RC_NEW_SCHEDULE && resultCode == Activity.RESULT_OK && data != null) {
             List<FixedEvent> userFixedEvents = data.getParcelableArrayListExtra(NewScheduleActivity.FIXED_EXTRA);
             List<FlexibleEvent> toPlanEvents = data.getParcelableArrayListExtra(NewScheduleActivity.FLEXIBLE_EXTRA);
-            mmServiceViewModel.submitUnsolvedSchedule(new MmProblemRequest(userFixedEvents, toPlanEvents));
+            mmServiceViewModel.submitUnsolvedSchedule(new MmProblemRequest(userFixedEvents, toPlanEvents,
+                    new BaseUserPreferences(0, 0, 0, 0, 0, 0, 0, 0)));
         }
     }
 }

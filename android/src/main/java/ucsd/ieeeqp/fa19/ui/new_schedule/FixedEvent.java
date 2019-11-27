@@ -3,69 +3,15 @@ package ucsd.ieeeqp.fa19.ui.new_schedule;
 import android.os.Parcel;
 import android.os.Parcelable;
 import optaplanner.BaseFixedEvent;
-import org.jetbrains.annotations.NotNull;
 
-public class FixedEvent implements BaseFixedEvent, Parcelable {
-    private String name;
-    private int startTime, endTime;
-    private double longitude, latitude;
+public class FixedEvent extends BaseFixedEvent implements Parcelable {
 
     public FixedEvent(String name, int startTime, int endTime, double longitude, double latitude) {
-        this.name = name;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.longitude = longitude;
-        this.latitude = latitude;
+        super(name, longitude, latitude, startTime, endTime);
     }
 
-    @NotNull
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public int getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(int startTime) {
-        this.startTime = startTime;
-    }
-
-    @Override
-    public int getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(int endTime) {
-        this.endTime = endTime;
-    }
-
-    @Override
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    @Override
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    protected FixedEvent(Parcel in) {
-        name = in.readString();
+    private FixedEvent(Parcel in) {
+        super(in.readString(), in.readInt(), in.readDouble(), in.readDouble());
     }
 
     @Override
@@ -75,7 +21,11 @@ public class FixedEvent implements BaseFixedEvent, Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
+        dest.writeString(getName());
+        dest.writeInt(getStartTime());
+        dest.writeInt(getEndTime());
+        dest.writeDouble(getLongitude());
+        dest.writeDouble(getLatitude());
     }
 
     @SuppressWarnings("unused")

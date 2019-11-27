@@ -3,6 +3,7 @@ package util
 import call.*
 import exposed.dao.MmSolutionEvent
 import exposed.dao.MmUser
+import exposed.dao.toBaseFixed
 import exposed.dsl.MmSolutionEvents
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -30,8 +31,8 @@ fun MmSolutionEvent.Companion.findSolution(
     find {
         (MmSolutionEvents.mmUserId eq mmUser.id) and (MmSolutionEvents.opPID eq opPID)
     }.forEach {
-        if (it.isOpPlanned) planned += it
-        else fixed += it
+        if (it.isOpPlanned) planned += it.toBaseFixed()
+        else fixed += it.toBaseFixed()
     }
     return MmSolutionResponse(fixed, planned)
 }

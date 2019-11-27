@@ -1,7 +1,7 @@
 package optaplanner
 
-interface BaseEvent {
-    val name: String
-    val longitude: Double
-    val latitude: Double
-}
+abstract class BaseEvent(
+        open val name: String,
+        open val longitude: Double,
+        open val latitude: Double
+)
