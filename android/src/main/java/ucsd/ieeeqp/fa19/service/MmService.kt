@@ -6,8 +6,11 @@ import call.*
 import io.ktor.client.call.receive
 import io.ktor.client.request.get
 import io.ktor.client.request.post
+import io.ktor.client.request.url
 import io.ktor.client.response.HttpResponse
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 
@@ -15,7 +18,6 @@ class MmService(
         context: Context,
         serverAuthCode: String?
 ) {
-
     private val config = LocalhostConfig(context)
     private val preferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
     private val client = MmHttpClient.create(
@@ -35,8 +37,12 @@ class MmService(
     fun solveProblemAsync(
             problemRequest: MmProblemRequest
     ): Deferred<MmSolveStatus> = client.async {
-        Log.d("MmService", "Request solve")
-        val response = client.post<HttpResponse>(route("/api/solve"), body = problemRequest)
+        Log.d("MmService", "Request solve: $problemRequest")
+        val response = client.post<HttpResponse> {
+            url((route("/api/solve")))
+            contentType(ContentType.Application.Json)
+            body = problemRequest
+        }
         if (response.status == HttpStatusCode.Accepted) response.receive<MmSolveStatus>()
         else throw RuntimeException("Problem solve request not accepted")
     }
