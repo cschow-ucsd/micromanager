@@ -12,6 +12,7 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.optaplanner.core.api.solver.Solver
+import java.lang.IllegalStateException
 import java.util.*
 
 fun BaseFlexibleEvent.toPlanning(): PlanningFlexibleEvent {
@@ -65,17 +66,29 @@ suspend inline fun MmProblemRequest.solve(
         solver.solve(unsolvedEventSchedule)
     }
     transaction {
-        MmSolutionEvents.batchInsert(solvedEventSchedule.planningFlexibleEventList) {
+        MmSolutionEvents.batchInsert(
+                solvedEventSchedule.let { it.planningFlexibleEventList + it.userFixedEventList }
+        ) {
             this[MmSolutionEvents.opPID] = pid
-            this[MmSolutionEvents.isOpPlanned] = true
             this[MmSolutionEvents.mmUserId] = mmUser.id
 
             // event details
             this[MmSolutionEvents.name] = it.name
-            this[MmSolutionEvents.startTime] = it.startTime
-            this[MmSolutionEvents.endTime] = it.startTime + it.duration
             this[MmSolutionEvents.longitude] = it.longitude
             this[MmSolutionEvents.latitude] = it.latitude
+            when (it) {
+                is PlanningFlexibleEvent -> {
+                    this[MmSolutionEvents.isOpPlanned] = true
+                    this[MmSolutionEvents.startTime] = it.startTime
+                    this[MmSolutionEvents.endTime] = it.startTime + it.duration
+                }
+                is BaseFixedEvent -> {
+                    this[MmSolutionEvents.isOpPlanned] = false
+                    this[MmSolutionEvents.startTime] = it.startTime
+                    this[MmSolutionEvents.endTime] = it.endTime
+                }
+                else -> throw IllegalStateException("Unsupported event type!")
+            }
         }
     }
     return MmSolveStatus(pid, true)

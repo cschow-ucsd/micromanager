@@ -18,9 +18,7 @@ class LocalhostConfig(
             val properties = Properties().apply {
                 load(rawResource)
             }
-            return properties.getProperty(name).also {
-                Log.d(TAG, "Resource $name: $it")
-            }
+            return properties.getProperty(name)
         } catch (e: Resources.NotFoundException) {
             Log.e(TAG, "Unable to find config.properties in raw resource folder.", e)
         } catch (e: IOException) {

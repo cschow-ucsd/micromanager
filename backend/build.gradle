@@ -63,3 +63,5 @@ sourceSets {
     test.kotlin.srcDirs += "test"
     test.resources.srcDirs += "resources"
 }
+
+mainClassName = 'MainKt'
