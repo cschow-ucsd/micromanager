@@ -15,7 +15,7 @@ public class EventSchedule {
     private List<BaseFixedEvent> userFixedEventList;
     private List<PlanningFlexibleEvent> planningFlexibleEventList;
     private HardSoftScore score;
-    private static final int MINS_PER_DAY = 1440;
+    private static final int MINS_PER_DAY = 1400;
     private BaseUserPreferences userPreferences;
 
 
