@@ -14,7 +14,6 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
-import optaplanner.BaseUserPreferences
 import optaplanner.EventSchedule
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.optaplanner.core.api.solver.SolverFactory
@@ -33,13 +32,6 @@ fun Route.mmPublicApi() {
     get("/") {
         call.respondText("Hello World!")
     }
-    get("what") {
-        val yeet = MmSolutionResponse(emptyList(), emptyList())
-        call.logger.debug(yeet.toString())
-        val obj = MmProblemRequest(emptyList(), emptyList(), BaseUserPreferences(0, 0, 0, 0, 0, 0, 0, 0))
-        val something = call.receive<String>()
-        call.respondText(something.toString())
-    }
 }
 
 /**
@@ -52,18 +44,19 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
             call.respond(HttpStatusCode.OK)
         }
         post("/solve") {
-            call.logger.debug("Received")
             val mmUser = transaction { MmUser[call.mmSession!!.subject] }
             val problem = call.receive<MmProblemRequest>()
             val mmSolveStatus = problem.solve(opSolverFactory.buildSolver(), mmUser) {
                 call.logger.debug("Created")
                 runningOpPIDs += mmUser to it
                 call.respond(HttpStatusCode.Accepted, it)
+                call.logger.debug("Created")
             }
             runningOpPIDs.removeIf { it.second.pid == mmSolveStatus.pid }
         }
         route("/status") {
             get("/all") {
+                call.logger.debug("Status query received.")
                 val mmUser = transaction { MmUser[call.mmSession!!.subject] }
                 val userOpPIDs: OpPIDs = transaction { mmUser.opSolutionEvents.map { it.opPID } }
                 val done = MmSolutionEvent.getSolutionStatuses(mmUser, userOpPIDs)
@@ -72,6 +65,7 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
                     if (it.first.id == mmUser.id) running.add(it.second)
                 }
                 val statusResponse: MmStatusResponse = done + running
+                call.logger.debug("Status response created: $statusResponse")
                 call.respond(HttpStatusCode.OK, statusResponse)
             }
             get("/ids") {
