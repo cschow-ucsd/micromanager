@@ -16,20 +16,22 @@ public class ScoreCalculator implements EasyScoreCalculator<EventSchedule> {
         int totalSocial = 0;
         int totalRec = 0;
 
-        ArrayList<BaseFixedEvent> occupiedSlots = new ArrayList<>();
-        occupiedSlots.addAll(eventSchedule.getUserFixedEventList());
+        ArrayList<BaseFixedEvent> occupiedSlots = new ArrayList<>(eventSchedule.getUserFixedEventList());
         BaseUserPreferences up = eventSchedule.getUserPreferences();
         for (PlanningFlexibleEvent event : eventSchedule.getPlanningFlexibleEventList()) {
             if(event.getStartTime() == null) continue;
             int endTime = event.getStartTime() + event.getDuration();
-                for (int i = 0; i < occupiedSlots.size(); i++) { // concurrentModificationException
+            int size = occupiedSlots.size();
+                for (int i = 0; i < size; i++) { // concurrentModificationException
                     BaseFixedEvent planned = occupiedSlots.get(i);
                 if (overlap(event.getStartTime(), planned.getStartTime(), planned.getEndTime()) ||
                         (overlap(endTime, planned.getStartTime(), planned.getEndTime()))) {
                     hardScore--;
-                } else {
+                }
+                else {
                     BaseFixedEvent tbp = OpUtilsKt.toPlannedFixed(event);
-                    occupiedSlots.add(tbp);
+                    occupiedSlots.add(0,tbp);
+                    size++;
                 }
             }
             if(event.getType().equals("Breakfast")){
@@ -56,7 +58,7 @@ public class ScoreCalculator implements EasyScoreCalculator<EventSchedule> {
         return HardSoftScore.of(hardScore, softScore);
     }
 
-    public boolean overlap(int time, int startTime, int endTime){
+    private boolean overlap(int time, int startTime, int endTime){
         return (time > startTime && time < endTime);
     }
 }

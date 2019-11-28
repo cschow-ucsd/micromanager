@@ -29,5 +29,8 @@ public class OptaplannerTest {
         SolverFactory<EventSchedule> s = SolverFactory.createFromXmlResource("event_schedule_solver_configuration.xml");
         Solver<EventSchedule> test = s.buildSolver();
         EventSchedule x = test.solve(e);
+        for(PlanningFlexibleEvent pr : x.getPlanningFlexibleEventList()){
+            System.out.println(pr.getName() + " of type " + pr.getType() + " starts at: " + pr.getStartTime());
+        }
     }
 }
