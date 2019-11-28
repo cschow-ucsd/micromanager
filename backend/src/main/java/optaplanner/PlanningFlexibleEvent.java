@@ -15,7 +15,7 @@ public class PlanningFlexibleEvent extends BaseFlexibleEvent {
         this("", "", 0, 0.0, 0);
     }
 
-    @PlanningVariable(valueRangeProviderRefs = "availableStartTimes")
+    @PlanningVariable(valueRangeProviderRefs = "availableStartTimes", nullable = false)
     public Integer getStartTime() {
         return startTime;
     }
