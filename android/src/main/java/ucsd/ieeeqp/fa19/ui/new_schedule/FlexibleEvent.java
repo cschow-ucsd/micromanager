@@ -10,7 +10,7 @@ public class FlexibleEvent extends BaseFlexibleEvent implements Parcelable {
     // private int priority;
 
     public FlexibleEvent(String name, String type, int duration, double longitude, double latitude) {
-        super(name, longitude, latitude, type, duration);
+        super(name, type, duration, longitude, latitude);
     }
 
     private FlexibleEvent(Parcel in) {

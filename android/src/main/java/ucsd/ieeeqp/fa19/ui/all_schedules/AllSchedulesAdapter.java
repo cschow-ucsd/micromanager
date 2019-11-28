@@ -30,11 +30,7 @@ public class AllSchedulesAdapter extends RecyclerView.Adapter<AllSchedulesAdapte
     public void onBindViewHolder(@NonNull AllEventsViewHolder holder, int position) {
         MmSolveStatus item = statuses.get(position);
         holder.idTextView.setText(item.getPid());
-        if (item.getDone()) {
-            holder.statusTextView.setText(R.string.status_done);
-        } else {
-            holder.statusTextView.setText(R.string.status_running);
-        }
+        holder.statusTextView.setText(item.getDone() ? R.string.status_done : R.string.status_running);
     }
 
     @Override

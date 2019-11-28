@@ -2,7 +2,7 @@ package optaplanner;
 
 public class PlannedFixedEvent extends BaseFixedEvent {
 
-    public PlannedFixedEvent(String name, double longitude, double latitude, int startTime, int endTime) {
-        super(name, longitude, latitude, startTime, endTime);
+    public PlannedFixedEvent(String name, int startTime, int endTime, double longitude, double latitude) {
+        super(name, startTime, endTime, longitude, latitude);
     }
 }

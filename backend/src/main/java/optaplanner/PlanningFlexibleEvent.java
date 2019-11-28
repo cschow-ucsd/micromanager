@@ -7,12 +7,12 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 public class PlanningFlexibleEvent extends BaseFlexibleEvent {
     private Integer startTime;
 
-    public PlanningFlexibleEvent(String name, String type, double longitude, double latitude, int duration) {
-        super(name, longitude, latitude, type, duration);
+    public PlanningFlexibleEvent(String name, String type, int duration, double longitude, double latitude) {
+        super(name, type, duration, longitude, latitude);
     }
 
     public PlanningFlexibleEvent() {
-        this("", "", 0.0, 0.0, 0);
+        this("", "", 0, 0.0, 0);
     }
 
     @PlanningVariable(valueRangeProviderRefs = "availableStartTimes")

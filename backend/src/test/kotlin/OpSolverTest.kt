@@ -1,3 +1,4 @@
+import optaplanner.BaseUserPreferences
 import optaplanner.EventSchedule
 import org.junit.Test
 import org.optaplanner.core.api.solver.SolverFactory
@@ -8,6 +9,7 @@ class OpSolverTest {
         val solverFactory: SolverFactory<EventSchedule> = SolverFactory
                 .createFromXmlResource<EventSchedule>("event_schedule_solver_configuration.xml")
         val solver = solverFactory.buildSolver()
-        val unsolvedEventSchedule = EventSchedule(emptyList(), emptyList(), TODO())
+        val unsolved = EventSchedule(emptyList(), emptyList(), BaseUserPreferences(0, 0, 0, 0, 0, 0, 0, 0))
+        val solved = solver.solve(unsolved)
     }
-}
+}   

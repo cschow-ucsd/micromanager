@@ -2,6 +2,8 @@ plugins {
     id 'org.jetbrains.kotlin.jvm'
 }
 
+apply plugin: 'application'
+
 group 'ieeqp'
 version '1.0-SNAPSHOT'
 

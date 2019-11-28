@@ -21,9 +21,9 @@ fun StatusPages.Configuration.mmStatusPagesConfiguration() {
         call.logger.debug(it.message)
         call.respond(HttpStatusCode.InternalServerError)
     }
-    exception<Throwable> {
-        call.logger.debug(it.message)
-        // uncaught exceptions, so throw InternalServerError
-        call.respond(HttpStatusCode.InternalServerError)
-    }
+//    exception<Throwable> {
+//        call.logger.error(it.message)
+//        // uncaught exceptions, so throw InternalServerError
+//        call.respond(HttpStatusCode.InternalServerError, it.message ?: "")
+//    }
 }

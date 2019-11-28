@@ -21,4 +21,4 @@ class MmSolutionEvent(id: EntityID<Int>) : IntEntity(id) {
     var latitude: Double by MmSolutionEvents.latitude
 }
 
-fun MmSolutionEvent.toBaseFixed() = BaseFixedEvent(name, longitude, latitude, startTime, endTime)
+fun MmSolutionEvent.toBaseFixed() = BaseFixedEvent(name, startTime, endTime, longitude, latitude)

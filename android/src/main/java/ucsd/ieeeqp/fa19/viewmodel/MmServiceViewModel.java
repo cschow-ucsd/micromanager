@@ -1,6 +1,7 @@
 package ucsd.ieeeqp.fa19.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -11,10 +12,13 @@ import call.MmSolveStatus;
 import kotlinx.coroutines.future.FutureKt;
 import ucsd.ieeeqp.fa19.service.MmService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class MmServiceViewModel extends AndroidViewModel {
     public static final int NOT_LOGGED_IN = 1000, LOGIN_FAILED = 1001, LOGIN_SUCCESS = 1002;
@@ -22,7 +26,7 @@ public class MmServiceViewModel extends AndroidViewModel {
 
     private MmService mmService;
     private MutableLiveData<Integer> mmLoginStateLiveData = new MutableLiveData<>(NOT_LOGGED_IN);
-    private MutableLiveData<List<MmSolveStatus>> mmSolveStatusLiveData = new MutableLiveData<>(null);
+    private MutableLiveData<List<MmSolveStatus>> mmSolveStatusLiveData = new MutableLiveData<>(new ArrayList<>());
     private Timer queryTimer;
 
     public MmServiceViewModel(@NonNull Application application) {
@@ -72,6 +76,7 @@ public class MmServiceViewModel extends AndroidViewModel {
         CompletableFuture<List<MmSolveStatus>> future = FutureKt.asCompletableFuture(mmService.getAllProgressAsync());
         future.handleAsync((result, exception) -> {
             if (exception != null) {
+                Log.d(TAG, "queryAllStatuses: result: " + result);
                 mmSolveStatusLiveData.postValue(result);
             }
             return null;

@@ -15,11 +15,11 @@ import org.optaplanner.core.api.solver.Solver
 import java.util.*
 
 fun BaseFlexibleEvent.toPlanning(): PlanningFlexibleEvent {
-    return PlanningFlexibleEvent(name, type, longitude, latitude, duration)
+    return PlanningFlexibleEvent(name, type, duration, longitude, latitude)
 }
 
 fun PlanningFlexibleEvent.toPlannedFixed(): PlannedFixedEvent {
-    return PlannedFixedEvent(name, longitude, latitude, startTime, startTime + duration)
+    return PlannedFixedEvent(name, startTime, startTime + duration, longitude, latitude)
 }
 
 fun MmSolutionEvent.Companion.findSolution(
@@ -37,13 +37,16 @@ fun MmSolutionEvent.Companion.findSolution(
     return MmSolutionResponse(fixed, planned)
 }
 
+
 fun MmSolutionEvent.Companion.getSolutionStatuses(
         mmUser: MmUser,
         opPIDs: OpPIDs
-): List<MmSolveStatus> = MmSolutionEvent.find {
-    (MmSolutionEvents.mmUserId eq mmUser.id) and (MmSolutionEvents.opPID inList opPIDs)
-}.distinctBy { it.opPID }.map {
-    MmSolveStatus(it.opPID, true)
+): List<MmSolveStatus> = transaction {
+    MmSolutionEvent.find {
+        (MmSolutionEvents.mmUserId eq mmUser.id) and (MmSolutionEvents.opPID inList opPIDs)
+    }.distinctBy { it.opPID }.map {
+        MmSolveStatus(it.opPID, true)
+    }
 }
 
 suspend inline fun MmProblemRequest.solve(

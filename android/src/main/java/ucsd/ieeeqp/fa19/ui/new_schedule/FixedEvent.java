@@ -7,11 +7,11 @@ import optaplanner.BaseFixedEvent;
 public class FixedEvent extends BaseFixedEvent implements Parcelable {
 
     public FixedEvent(String name, int startTime, int endTime, double longitude, double latitude) {
-        super(name, longitude, latitude, startTime, endTime);
+        super(name, startTime, endTime, longitude, latitude);
     }
 
     private FixedEvent(Parcel in) {
-        super(in.readString(), in.readInt(), in.readDouble(), in.readDouble());
+        super(in.readString(), in.readInt(), in.readInt(), in.readDouble(), in.readDouble());
     }
 
     @Override

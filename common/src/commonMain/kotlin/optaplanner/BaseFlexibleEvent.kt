@@ -2,8 +2,8 @@ package optaplanner
 
 open class BaseFlexibleEvent(
         override val name: String,
-        override val longitude: Double,
-        override val latitude: Double,
         open val type: String,
-        open val duration: Int
+        open val duration: Int,
+        override val longitude: Double,
+        override val latitude: Double
 ) : BaseEvent(name, longitude, latitude)

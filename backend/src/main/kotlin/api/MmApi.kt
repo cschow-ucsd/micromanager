@@ -1,12 +1,8 @@
 package api
 
-import call.MmProblemRequest
-import call.MmSolveStatus
-import call.OpPID
-import call.OpPIDs
+import call.*
 import exposed.dao.MmSolutionEvent
 import exposed.dao.MmUser
-import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.http.HttpStatusCode
@@ -18,13 +14,11 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.util.KtorExperimentalAPI
+import optaplanner.BaseUserPreferences
 import optaplanner.EventSchedule
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.optaplanner.core.api.solver.SolverFactory
-import util.findSolution
-import util.getSolutionStatuses
-import util.mmSession
-import util.solve
+import util.*
 
 private val runningOpPIDs: MutableList<Pair<MmUser, MmSolveStatus>> = mutableListOf()
 private val opSolverFactory: SolverFactory<EventSchedule> = SolverFactory
@@ -39,6 +33,13 @@ fun Route.mmPublicApi() {
     get("/") {
         call.respondText("Hello World!")
     }
+    get("what") {
+        val yeet = MmSolutionResponse(emptyList(), emptyList())
+        call.logger.debug(yeet.toString())
+        val obj = MmProblemRequest(emptyList(), emptyList(), BaseUserPreferences(0, 0, 0, 0, 0, 0, 0, 0))
+        val something = call.receive<String>()
+        call.respondText(something.toString())
+    }
 }
 
 /**
@@ -50,10 +51,12 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
         get("/login") {
             call.respond(HttpStatusCode.OK)
         }
-        post("/op-solve") {
+        post("/solve") {
+            call.logger.debug("Received")
             val mmUser = transaction { MmUser[call.mmSession!!.subject] }
             val problem = call.receive<MmProblemRequest>()
             val mmSolveStatus = problem.solve(opSolverFactory.buildSolver(), mmUser) {
+                call.logger.debug("Created")
                 runningOpPIDs += mmUser to it
                 call.respond(HttpStatusCode.Accepted, it)
             }
@@ -62,19 +65,19 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
         route("/status") {
             get("/all") {
                 val mmUser = transaction { MmUser[call.mmSession!!.subject] }
-                val userOpPIDs: OpPIDs = mmUser.opSolutionEvents.map { it.opPID }
-                val done = transaction { MmSolutionEvent.getSolutionStatuses(mmUser, userOpPIDs) }
+                val userOpPIDs: OpPIDs = transaction { mmUser.opSolutionEvents.map { it.opPID } }
+                val done = MmSolutionEvent.getSolutionStatuses(mmUser, userOpPIDs)
                 val running = mutableListOf<MmSolveStatus>()
                 runningOpPIDs.forEach {
                     if (it.first.id == mmUser.id) running.add(it.second)
                 }
-                val statusResponse: List<MmSolveStatus> = done + running
+                val statusResponse: MmStatusResponse = done + running
                 call.respond(HttpStatusCode.OK, statusResponse)
             }
             get("/ids") {
                 val mmUser = transaction { MmUser[call.mmSession!!.subject] }
                 val opPIDs = call.receive<OpPIDs>()
-                val done = transaction { MmSolutionEvent.getSolutionStatuses(mmUser, opPIDs) }
+                val done = MmSolutionEvent.getSolutionStatuses(mmUser, opPIDs)
                 val running = mutableListOf<MmSolveStatus>()
                 runningOpPIDs.forEach {
                     if (it.first.id == mmUser.id && opPIDs.contains(it.second.pid)) running.add(it.second)
@@ -90,11 +93,4 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
             call.respond(HttpStatusCode.OK, solution)
         }
     }
-}
-
-/**
- * Checks if a session exists before handling the API calls.
- */
-private fun ApplicationCall.handleSession() {
-    if (mmSession == null) throw NoSessionException("Missing session!")
 }

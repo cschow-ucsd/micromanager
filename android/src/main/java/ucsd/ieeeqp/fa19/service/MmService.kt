@@ -1,6 +1,7 @@
 package ucsd.ieeeqp.fa19.service
 
 import android.content.Context
+import android.util.Log
 import call.*
 import io.ktor.client.call.receive
 import io.ktor.client.request.get
@@ -34,7 +35,8 @@ class MmService(
     fun solveProblemAsync(
             problemRequest: MmProblemRequest
     ): Deferred<MmSolveStatus> = client.async {
-        val response = client.post<HttpResponse>(route("/api/op-solve"), body = problemRequest)
+        Log.d("MmService", "Request solve")
+        val response = client.post<HttpResponse>(route("/api/solve"), body = problemRequest)
         if (response.status == HttpStatusCode.Accepted) response.receive<MmSolveStatus>()
         else throw RuntimeException("Problem solve request not accepted")
     }
