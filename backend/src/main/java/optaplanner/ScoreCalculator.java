@@ -35,22 +35,22 @@ public class ScoreCalculator implements EasyScoreCalculator<EventSchedule> {
                     BaseFixedEvent tbp = OpUtilsKt.toPlannedFixed(event);
                     occupiedSlots.add(tbp);
                 }
-            if(event.getType().equals("Breakfast")){
+            if(event.getType().equals(BaseFlexibleEvent.BREAKFAST)){
                 if(overlap(event.getStartTime(), up.getBfStartTime(), up.getBfEndTime()) &&
                         overlap(endTime, up.getBfStartTime(), up.getBfEndTime())) softScore++;
             }
-            else if(event.getType().equals("Lunch")) {
+            else if(event.getType().equals(BaseFlexibleEvent.LUNCH)) {
                 if(overlap(event.getStartTime(), up.getLunchStartTime(), up.getLunchEndTime()) &&
                     overlap(endTime, up.getLunchStartTime(), up.getLunchEndTime())) softScore++;
             }
-            else if(event.getType().equals("Dinner")){
+            else if(event.getType().equals(BaseFlexibleEvent.DINNER)){
                 if(overlap(event.getStartTime(), up.getDinnerStartTime(), up.getDinnerEndTime()) &&
                     overlap(endTime, up.getDinnerStartTime(), up.getDinnerEndTime())) softScore++;
             }
-            else if(event.getType().equals("Social")){
+            else if(event.getType().equals(BaseFlexibleEvent.SOCIAL)){
                 totalSocial += event.getDuration();
             }
-            else if(event.getType().equals("Recreational")){
+            else if(event.getType().equals(BaseFlexibleEvent.REC)){
                 totalRec += event.getDuration();
             }
         }

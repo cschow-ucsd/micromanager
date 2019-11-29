@@ -20,8 +20,8 @@ public class OptaplannerTest {
         a.add(new PlannedFixedEvent("IEEE Workathon", 840, 960, 0, 0));
         a.add(new PlannedFixedEvent("CSE 20", 540, 600, 0, 0));
         b.add(new PlanningFlexibleEvent("Breakfast", "Breakfast", 40, 0, 0));
-        b.add(new PlanningFlexibleEvent("Lunch", "Lunch", 70, 0, 0));
-        b.add(new PlanningFlexibleEvent("Dinner", "Dinner", 60 ,0, 0));
+        b.add(new PlanningFlexibleEvent("Lunch", "Lunch", 20, 0, 0));
+        b.add(new PlanningFlexibleEvent("Dinner", "Dinner", 20 ,0, 0));
         b.add(new PlanningFlexibleEvent("CSE 20 HW", "HW", 50, 0, 0));
         b.add(new PlanningFlexibleEvent("Work on QP Project", "Club", 120, 0, 0));
         EventSchedule e = new EventSchedule(a, b,

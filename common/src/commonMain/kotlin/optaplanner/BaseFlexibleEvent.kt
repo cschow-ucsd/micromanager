@@ -7,3 +7,12 @@ open class BaseFlexibleEvent(
         longitude: Double,
         latitude: Double
 ) : BaseEvent(name, longitude, latitude)
+{
+    companion object {
+        const val BREAKFAST = "Breakfast"
+        const val LUNCH = "Lunch"
+        const val DINNER = "Dinner"
+        const val SOCIAL = "Social"
+        const val REC = "Recreational"
+    }
+}
