@@ -60,7 +60,7 @@ suspend inline fun MmProblemRequest.solve(
 
     // solve
     val unsolvedEventSchedule = EventSchedule(
-            fixedEvents, toPlanEvents.map { it.toPlanning() }, userPreferences
+            fixedEvents, toPlanEvents.map { it.toPlanning() }, userPreferences, currentTime
     )
     val solvedEventSchedule = withContext(Dispatchers.Default) {
         solver.solve(unsolvedEventSchedule)

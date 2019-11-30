@@ -15,6 +15,7 @@ public class EventSchedule {
     private List<BaseFixedEvent> userFixedEventList;
     private List<PlanningFlexibleEvent> planningFlexibleEventList;
     private HardSoftScore score;
+    private int currentTime;
     private static final int MINS_PER_DAY = 1400;
     private BaseUserPreferences userPreferences;
 
@@ -22,17 +23,19 @@ public class EventSchedule {
     public EventSchedule(
             List<BaseFixedEvent> userFixedEventList,
             List<PlanningFlexibleEvent> planningFlexibleEventList,
-            BaseUserPreferences userPreferences
+            BaseUserPreferences userPreferences,
+            int currentTime
     ) {
         this.userFixedEventList = userFixedEventList;
         this.planningFlexibleEventList = planningFlexibleEventList;
         this.userPreferences = userPreferences;
+        this.currentTime = currentTime;
     }
 
     // default constructor for optaplanner
     public EventSchedule() {
         this(new ArrayList<>(), new ArrayList<>(), new BaseUserPreferences(0, 0, 0, 0, 0
-        ,0 ,0 ,0));
+        ,0 ,0 ,0), 0);
     }
 
     @PlanningEntityCollectionProperty
@@ -65,7 +68,7 @@ public class EventSchedule {
     @ProblemFactCollectionProperty
     public List<Integer> getAvailableStartTimes() {
         List<Integer> startTimes = new ArrayList<>();
-        for (int i = 0; i < MINS_PER_DAY; i++) {
+        for (int i = currentTime; i < MINS_PER_DAY; i++) {
             startTimes.add(i);
         }
         return startTimes;

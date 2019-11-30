@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class ScoreCalculator implements EasyScoreCalculator<EventSchedule> {
 
     @Override
-    public Score calculateScore(EventSchedule eventSchedule) {
+    public Score calculateScore(EventSchedule eventSchedule) { // add free time events? any unused space can be labelled as free time
         int hardScore = 0;
         int softScore = 0;
         int totalSocial = 0;
@@ -24,8 +24,8 @@ public class ScoreCalculator implements EasyScoreCalculator<EventSchedule> {
             int endTime = event.getStartTime() + event.getDuration();
             int size = occupiedSlots.size();
                 for(BaseFixedEvent planned : occupiedSlots) {
-                if (overlap(event.getStartTime(), planned.getStartTime(), planned.getEndTime()) ||
-                        (overlap(endTime, planned.getStartTime(), planned.getEndTime()))) {
+                if (overlap(event.getStartTime(), planned.getStartTime(), planned.getEndTime() + 5) ||
+                        (overlap(endTime, planned.getStartTime(), planned.getEndTime() + 5))) {
                     hardScore--;
                     conflict = true;
                     break;

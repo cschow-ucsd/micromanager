@@ -25,12 +25,12 @@ public class OptaplannerTest {
         b.add(new PlanningFlexibleEvent("CSE 20 HW", "HW", 50, 0, 0));
         b.add(new PlanningFlexibleEvent("Work on QP Project", "Club", 120, 0, 0));
         EventSchedule e = new EventSchedule(a, b,
-                new BaseUserPreferences(460, 480, 600, 630, 960, 1000, 60, 60));
+                new BaseUserPreferences(460, 480, 600, 630, 960, 1000, 60, 60), 0);
         SolverFactory<EventSchedule> s = SolverFactory.createFromXmlResource("event_schedule_solver_configuration.xml");
         Solver<EventSchedule> test = s.buildSolver();
         EventSchedule x = test.solve(e);
         for(PlanningFlexibleEvent pr : x.getPlanningFlexibleEventList()){
-            System.out.println(pr.getName() + " of type " + pr.getType() + " starts at: " + pr.getStartTime());
+            System.out.println(pr.getName() + " of type " + pr.getType() + " starts at: " + (pr.getStartTime() / 60) + ":" + (pr.getStartTime() % 60));
         }
     }
 }
