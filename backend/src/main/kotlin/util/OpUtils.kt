@@ -1,24 +1,13 @@
 package util
 
-import api.TravelTimeRequest
 import call.MmProblemRequest
 import call.MmSolutionResponse
 import call.MmSolveStatus
-import exposed.dao.MmSolutionEvent
 import exposed.dao.MmSolutionSchedule
 import exposed.dao.MmUser
 import exposed.dao.toBaseFixed
 import exposed.dsl.MmSolutionEvents
 import exposed.dsl.MmSolutionSchedules
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.apache.Apache
-import io.ktor.client.features.json.GsonSerializer
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.request.post
-import io.ktor.client.request.url
-import io.ktor.client.response.HttpResponse
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import optaplanner.*
