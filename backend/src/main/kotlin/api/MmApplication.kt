@@ -14,6 +14,7 @@ import io.ktor.util.KtorExperimentalAPI
 @KtorExperimentalAPI
 fun Application.mmModule() {
     MmDatabaseFactory.init()
+    subscribeToLifecycleCallbacks()
     installFeatures()
 
     routing {

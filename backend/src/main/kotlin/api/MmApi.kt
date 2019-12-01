@@ -1,10 +1,18 @@
 package api
 
-import call.*
+import call.MmProblemRequest
+import call.MmSolveStatus
+import call.MmStatusResponse
 import exposed.dao.MmSolutionSchedule
 import exposed.dao.MmUser
+import io.ktor.application.Application
+import io.ktor.application.ApplicationStopped
 import io.ktor.application.call
 import io.ktor.auth.authenticate
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.apache.Apache
+import io.ktor.client.features.json.GsonSerializer
+import io.ktor.client.features.json.JsonFeature
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
@@ -23,6 +31,20 @@ import util.*
 private val runningProcesses: MutableList<Pair<MmUser, MmSolveStatus>> = mutableListOf()
 private val opSolverFactory: SolverFactory<EventSchedule> = SolverFactory
         .createFromXmlResource<EventSchedule>("event_schedule_solver_configuration.xml")
+private val httpClient = HttpClient(Apache) {
+    install(JsonFeature) {
+        serializer = GsonSerializer {
+            serializeNulls()
+            disableHtmlEscaping()
+        }
+    }
+}
+
+fun Application.subscribeToLifecycleCallbacks() {
+    environment.monitor.subscribe(ApplicationStopped) {
+        httpClient.close()
+    }
+}
 
 /**
  * Public routes.
@@ -46,7 +68,7 @@ fun Route.mmProtectedApi() = authenticate(MmAuthenticate.API_AUTH) {
         post("/solve") {
             val mmUser = transaction { MmUser[call.mmSession!!.subject] }
             val problem = call.receive<MmProblemRequest>()
-            val mmSolveStatus = problem.solve(opSolverFactory.buildSolver(), mmUser) {
+            val mmSolveStatus = problem.solve(opSolverFactory.buildSolver(), mmUser, httpClient) {
                 call.logger.debug("Created")
                 runningProcesses += mmUser to it
                 call.respond(HttpStatusCode.Accepted, it)

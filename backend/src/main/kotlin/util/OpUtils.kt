@@ -1,5 +1,8 @@
 package util
 
+import MmHoconConfig
+import api.TravelTimeRequest
+import api.TravelTimeResponse
 import call.MmProblemRequest
 import call.MmSolutionResponse
 import call.MmSolveStatus
@@ -8,6 +11,13 @@ import exposed.dao.MmUser
 import exposed.dao.toBaseFixed
 import exposed.dsl.MmSolutionEvents
 import exposed.dsl.MmSolutionSchedules
+import io.ktor.client.HttpClient
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.url
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import optaplanner.*
@@ -54,25 +64,43 @@ fun MmSolutionSchedule.Companion.getSolutionStatuses(
     }
 }
 
+@KtorExperimentalAPI
 suspend inline fun MmProblemRequest.solve(
         solver: Solver<EventSchedule>,
         mmUser: MmUser,
+        client: HttpClient,
         onOpPidCreated: (MmSolveStatus) -> Unit
 ): MmSolveStatus {
-//    val client = HttpClient(Apache){
-//        install(JsonFeature) {
-//            serializer = GsonSerializer {
-//                serializeNulls()
-//                disableHtmlEscaping()
-//            }
-//        }
-//    }
-//    val response = client.post<HttpResponse>{
-//        url("api.traveltimeapp.com")
-//        contentType(ContentType.Application.Json)
-//        body = TravelTimeRequest(emptyList(), emptyList(), emptyList())
-//    }
-
+    // travel time API call
+    val searchId = "Forward Seach"
+    val locations = (toPlanEvents + fixedEvents).mapIndexed { id, event ->
+        TravelTimeRequest.Location(id.toString(), TravelTimeRequest.Location.Coords(event.longitude, event.latitude))
+    }.distinct()
+    val departureSearches = locations.mapIndexed { i, location ->
+        val otherLocations = locations.filter { it != location }
+        TravelTimeRequest.DepartureSearch(
+                id = i.toString(),
+                departure_location_id = i.toString(),
+                arrival_location_ids = otherLocations.map { it.id },
+                transportation = TravelTimeRequest.DepartureSearch.Transportation("walking"),
+                travel_time = 3600, // seconds,
+                departure_time = "",
+                properties = listOf("travel_time"),
+                range = TravelTimeRequest.DepartureSearch.Range(true, 1, 600)
+        )
+    }
+    val travelTimeRequest = TravelTimeRequest(
+            locations = locations,
+            departure_searches = departureSearches,
+            arrival_searches = emptyList()
+    )
+    val travelTimeResponse = client.post<TravelTimeResponse> {
+        header("X-Application-Id", MmHoconConfig.travelTimeAppId)
+        header("X-Api-Key", MmHoconConfig.travelTimeApiKey)
+        url("http://api.traveltimeapp.com/v4/time-filter")
+        contentType(ContentType.Application.Json)
+        body = travelTimeRequest
+    }
 
     val pid = UUID.randomUUID().toString()
     val status = MmSolveStatus(scheduleName, pid, false)
@@ -80,7 +108,10 @@ suspend inline fun MmProblemRequest.solve(
 
     // solve
     val unsolvedEventSchedule = EventSchedule(
-            fixedEvents, toPlanEvents.map { it.toPlanning() }, userPreferences, currentTime
+            fixedEvents,
+            toPlanEvents.map { it.toPlanning() },
+            userPreferences,
+            currentTime
     )
     val solvedEventSchedule = withContext(Dispatchers.Default) {
         solver.solve(unsolvedEventSchedule)

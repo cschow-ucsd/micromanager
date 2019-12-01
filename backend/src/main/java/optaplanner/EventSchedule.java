@@ -1,5 +1,6 @@
 package optaplanner;
 
+import api.TravelTimeResponse;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
@@ -18,24 +19,26 @@ public class EventSchedule {
     private int currentTime;
     private static final int MINS_PER_DAY = 1400;
     private BaseUserPreferences userPreferences;
-
+    private List<TravelTimeResponse.Result> travelTimes;
 
     public EventSchedule(
             List<BaseFixedEvent> userFixedEventList,
             List<PlanningFlexibleEvent> planningFlexibleEventList,
             BaseUserPreferences userPreferences,
-            int currentTime
+            int currentTime,
+            List<TravelTimeResponse.Result> travelTimes
     ) {
         this.userFixedEventList = userFixedEventList;
         this.planningFlexibleEventList = planningFlexibleEventList;
         this.userPreferences = userPreferences;
         this.currentTime = currentTime;
+        this.travelTimes = travelTimes;
     }
 
     // default constructor for optaplanner
     public EventSchedule() {
-        this(new ArrayList<>(), new ArrayList<>(), new BaseUserPreferences(0, 0, 0, 0, 0
-        ,0 ,0 ,0, 0, 0), 0);
+        this(new ArrayList<>(), new ArrayList<>(), new BaseUserPreferences(0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0), 0, new ArrayList<>());
     }
 
     @PlanningEntityCollectionProperty
@@ -58,6 +61,10 @@ public class EventSchedule {
 
     public BaseUserPreferences getUserPreferences() {
         return userPreferences;
+    }
+
+    public List<TravelTimeResponse.Result> getTravelTimes() {
+        return travelTimes;
     }
 
     public void setScore(HardSoftScore score) {

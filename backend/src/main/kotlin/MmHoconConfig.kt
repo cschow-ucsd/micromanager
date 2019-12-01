@@ -13,4 +13,7 @@ object MmHoconConfig : HoconApplicationConfig(ConfigFactory.load()) {
     val mmClientId = this["mm.clientId"]
     val mmClientSecret = this["mm.clientSecret"]
     val mmTransformerHex = this["mm.transformerHex"]
+
+    val travelTimeAppId = this["travelTime.appId"]
+    val travelTimeApiKey = this["travelTime.apiKey"]
 }
