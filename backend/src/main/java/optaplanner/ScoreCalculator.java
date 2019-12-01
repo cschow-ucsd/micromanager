@@ -53,6 +53,10 @@ public class ScoreCalculator implements EasyScoreCalculator<EventSchedule> {
             else if(event.getType().equals(BaseFlexibleEvent.REC)){
                 totalRec += event.getDuration();
             }
+            else if(event.getType().equals(BaseFlexibleEvent.HW)){
+                if(overlap(event.getStartTime(), up.getHwStartTime(), up.getHwEndTime()) &&
+                        overlap(endTime, up.getHwStartTime(), up.getHwEndTime())) softScore++;
+            }
         }
         if(totalSocial >= up.getSocTime()) softScore++;
         if(totalRec >= up.getRecTime()) softScore++;

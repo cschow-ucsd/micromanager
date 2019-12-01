@@ -35,7 +35,7 @@ public class EventSchedule {
     // default constructor for optaplanner
     public EventSchedule() {
         this(new ArrayList<>(), new ArrayList<>(), new BaseUserPreferences(0, 0, 0, 0, 0
-        ,0 ,0 ,0), 0);
+        ,0 ,0 ,0, 0, 0), 0);
     }
 
     @PlanningEntityCollectionProperty
