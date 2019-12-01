@@ -2,7 +2,10 @@ package ucsd.ieeeqp.fa19.service
 
 import android.content.Context
 import android.util.Log
-import call.*
+import call.MmProblemRequest
+import call.MmSolutionResponse
+import call.MmSolveStatus
+import call.MmStatusResponse
 import io.ktor.client.call.receive
 import io.ktor.client.request.get
 import io.ktor.client.request.post
@@ -13,6 +16,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
+import optaplanner.OpPID
+import optaplanner.OpPIDs
 
 class MmService(
         context: Context,
@@ -50,7 +55,11 @@ class MmService(
     fun getProblemProgressAsync(
             opPIDs: OpPIDs
     ): Deferred<MmStatusResponse> = client.async {
-        client.get<MmStatusResponse>(route("/api/status/ids"), body = opPIDs)
+        client.post<MmStatusResponse>() {
+            url(route("/api/status/ids"))
+            contentType(ContentType.Application.Json)
+            body = opPIDs
+        }
     }
 
     fun getAllProgressAsync(): Deferred<MmStatusResponse> = client.async {
@@ -60,7 +69,11 @@ class MmService(
     fun getSolutionAsync(
             opPID: OpPID
     ): Deferred<MmSolutionResponse> = client.async {
-        client.get<MmSolutionResponse>(route("/api/solution"), body = opPID)
+        client.post<MmSolutionResponse> {
+            url(route("/api/solution"))
+            contentType(ContentType.Application.Json)
+            body = opPID
+        }
     }
 
     private fun route(

@@ -51,6 +51,11 @@ class NewFixedEventsFragment : Fragment() {
         })
         adapter = fixedAdapter
     }
+
+    override fun onResume() {
+        super.onResume()
+        activity!!.setTitle(R.string.new_fixed_events_fragment)
+    }
 }
 
 private fun View.createFixedEvent() = FixedEvent(

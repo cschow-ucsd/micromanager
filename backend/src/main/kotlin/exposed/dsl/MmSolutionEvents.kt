@@ -3,9 +3,8 @@ package exposed.dsl
 import org.jetbrains.exposed.dao.IntIdTable
 
 object MmSolutionEvents : IntIdTable() {
-    val opPID = varchar("op_pid", 50).index()
+    val schedule = reference("schedule", MmSolutionSchedules)
     val isOpPlanned = bool("op_planned")
-    val mmUserId = reference("mm_user", MmUsers)
 
     // event details
     val name = varchar("name", 50)

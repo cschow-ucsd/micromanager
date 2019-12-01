@@ -9,9 +9,8 @@ import org.jetbrains.exposed.dao.IntEntityClass
 class MmSolutionEvent(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<MmSolutionEvent>(MmSolutionEvents)
 
-    var opPID by MmSolutionEvents.opPID
+    var schedule by MmSolutionSchedule referencedOn MmSolutionEvents.schedule
     var isOpPlanned by MmSolutionEvents.isOpPlanned
-    var mmUser by MmUser referencedOn MmSolutionEvents.mmUserId
 
     // event details
     var name: String by MmSolutionEvents.name

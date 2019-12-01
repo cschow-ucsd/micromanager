@@ -11,24 +11,28 @@ import ucsd.ieeeqp.fa19.R;
 
 import java.util.List;
 
-public class AllSchedulesAdapter extends RecyclerView.Adapter<AllSchedulesAdapter.AllEventsViewHolder> {
+public class AllSchedulesAdapter extends RecyclerView.Adapter<AllSchedulesAdapter.AllSchedulesViewHolder> {
     private List<MmSolveStatus> statuses;
+    private View.OnClickListener listener;
 
-    public AllSchedulesAdapter(List<MmSolveStatus> statuses) {
+    public AllSchedulesAdapter(List<MmSolveStatus> statuses, View.OnClickListener listener) {
         this.statuses = statuses;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
-    public AllEventsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AllSchedulesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View rootView = inflater.inflate(R.layout.item_schedule, parent, false);
-        return new AllEventsViewHolder(rootView);
+        rootView.setOnClickListener(listener);
+        return new AllSchedulesViewHolder(rootView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AllEventsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AllSchedulesViewHolder holder, int position) {
         MmSolveStatus item = statuses.get(position);
+        holder.nameTextView.setText(item.getScheduleName());
         holder.idTextView.setText(item.getPid());
         holder.statusTextView.setText(item.getDone() ? R.string.status_done : R.string.status_running);
     }
@@ -38,12 +42,14 @@ public class AllSchedulesAdapter extends RecyclerView.Adapter<AllSchedulesAdapte
         return statuses.size();
     }
 
-    static class AllEventsViewHolder extends RecyclerView.ViewHolder {
+    static class AllSchedulesViewHolder extends RecyclerView.ViewHolder {
+        TextView nameTextView;
         TextView idTextView;
         TextView statusTextView;
 
-        public AllEventsViewHolder(@NonNull View itemView) {
+        public AllSchedulesViewHolder(@NonNull View itemView) {
             super(itemView);
+            nameTextView = itemView.findViewById(R.id.textview_item_schedule_name);
             idTextView = itemView.findViewById(R.id.textview_item_schedule_id);
             statusTextView = itemView.findViewById(R.id.textview_item_schedule_status);
         }

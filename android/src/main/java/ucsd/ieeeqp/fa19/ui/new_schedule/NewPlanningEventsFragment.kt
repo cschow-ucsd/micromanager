@@ -51,6 +51,11 @@ class NewPlanningEventsFragment : Fragment() {
         })
         adapter = flexibleAdapter
     }
+
+    override fun onResume() {
+        super.onResume()
+        activity!!.setTitle(R.string.new_planning_events_fragment)
+    }
 }
 
 private fun View.createFlexibleEvent() = FlexibleEvent(

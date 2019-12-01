@@ -83,6 +83,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.viewpager:viewpager:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
+
+    implementation 'com.appyvet:materialrangebar:1.4.7'
 }
 
 /**

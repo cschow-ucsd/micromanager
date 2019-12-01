@@ -1,10 +1,11 @@
 package util
 
 import call.*
-import exposed.dao.MmSolutionEvent
+import exposed.dao.MmSolutionSchedule
 import exposed.dao.MmUser
 import exposed.dao.toBaseFixed
 import exposed.dsl.MmSolutionEvents
+import exposed.dsl.MmSolutionSchedules
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import optaplanner.*
@@ -13,6 +14,7 @@ import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.optaplanner.core.api.solver.Solver
 import java.lang.IllegalStateException
+import java.lang.RuntimeException
 import java.util.*
 
 fun BaseFlexibleEvent.toPlanning(): PlanningFlexibleEvent {
@@ -23,30 +25,32 @@ fun PlanningFlexibleEvent.toPlannedFixed(): PlannedFixedEvent {
     return PlannedFixedEvent(name, startTime, startTime + duration, longitude, latitude)
 }
 
-fun MmSolutionEvent.Companion.findSolution(
+fun MmSolutionSchedule.Companion.findSolution(
         mmUser: MmUser,
         opPID: OpPID
 ): MmSolutionResponse {
     val fixed = mutableListOf<BaseFixedEvent>()
     val planned = mutableListOf<BaseFixedEvent>()
-    find {
-        (MmSolutionEvents.mmUserId eq mmUser.id) and (MmSolutionEvents.opPID eq opPID)
-    }.forEach {
-        if (it.isOpPlanned) planned += it.toBaseFixed()
-        else fixed += it.toBaseFixed()
+    val schedule = transaction { MmSolutionSchedule[opPID.value] }
+    if (schedule.mmUser.id != mmUser.id) throw RuntimeException("User does not have access to this schedule.")
+    transaction {
+        schedule.events.forEach {
+            if (it.isOpPlanned) planned += it.toBaseFixed()
+            else fixed += it.toBaseFixed()
+        }
     }
     return MmSolutionResponse(fixed, planned)
 }
 
 
-fun MmSolutionEvent.Companion.getSolutionStatuses(
+fun MmSolutionSchedule.Companion.getSolutionStatuses(
         mmUser: MmUser,
         opPIDs: OpPIDs
 ): List<MmSolveStatus> = transaction {
-    MmSolutionEvent.find {
-        (MmSolutionEvents.mmUserId eq mmUser.id) and (MmSolutionEvents.opPID inList opPIDs)
-    }.distinctBy { it.opPID }.map {
-        MmSolveStatus(it.opPID, true)
+    find {
+        (MmSolutionSchedules.mmUserId eq mmUser.id) and (MmSolutionSchedules.id inList opPIDs.map { it.value })
+    }.map {
+        MmSolveStatus(it.scheduleName, it.id.value, true)
     }
 }
 
@@ -56,7 +60,8 @@ suspend inline fun MmProblemRequest.solve(
         onOpPidCreated: (MmSolveStatus) -> Unit
 ): MmSolveStatus {
     val pid = UUID.randomUUID().toString()
-    onOpPidCreated(MmSolveStatus(pid, false))
+    val status = MmSolveStatus(scheduleName, pid, false)
+    onOpPidCreated(status)
 
     // solve
     val unsolvedEventSchedule = EventSchedule(
@@ -65,14 +70,19 @@ suspend inline fun MmProblemRequest.solve(
     val solvedEventSchedule = withContext(Dispatchers.Default) {
         solver.solve(unsolvedEventSchedule)
     }
+
+    // insert solved schedule into database
+    val newSchedule = transaction {
+        MmSolutionSchedule.new(pid) {
+            this.scheduleName = this@solve.scheduleName
+            this.mmUser = mmUser
+        }
+    }
     transaction {
         MmSolutionEvents.batchInsert(
                 solvedEventSchedule.let { it.planningFlexibleEventList + it.userFixedEventList }
         ) {
-            this[MmSolutionEvents.opPID] = pid
-            this[MmSolutionEvents.mmUserId] = mmUser.id
-
-            // event details
+            this[MmSolutionEvents.schedule] = newSchedule.id
             this[MmSolutionEvents.name] = it.name
             this[MmSolutionEvents.longitude] = it.longitude
             this[MmSolutionEvents.latitude] = it.latitude
@@ -91,5 +101,5 @@ suspend inline fun MmProblemRequest.solve(
             }
         }
     }
-    return MmSolveStatus(pid, true)
+    return status.copy(done = true)
 }

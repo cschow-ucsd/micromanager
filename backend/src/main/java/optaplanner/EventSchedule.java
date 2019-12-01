@@ -35,7 +35,7 @@ public class EventSchedule {
     // default constructor for optaplanner
     public EventSchedule() {
         this(new ArrayList<>(), new ArrayList<>(), new BaseUserPreferences(0, 0, 0, 0, 0
-        ,0 ,0 ,0), 0);
+                , 0, 0, 0), 0);
     }
 
     @PlanningEntityCollectionProperty
@@ -43,7 +43,7 @@ public class EventSchedule {
         return planningFlexibleEventList;
     }
 
-    public List<BaseFixedEvent> getUserFixedEventList(){
+    public List<BaseFixedEvent> getUserFixedEventList() {
         return userFixedEventList;
     }
 
@@ -56,7 +56,7 @@ public class EventSchedule {
         return score;
     }
 
-    public BaseUserPreferences getUserPreferences(){
+    public BaseUserPreferences getUserPreferences() {
         return userPreferences;
     }
 

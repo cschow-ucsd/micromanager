@@ -13,12 +13,14 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import call.MmProblemRequest;
+import call.MmSolveStatus;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import optaplanner.BaseUserPreferences;
 import ucsd.ieeeqp.fa19.R;
+import ucsd.ieeeqp.fa19.ui.display_schedule.DisplayScheduleActivity;
 import ucsd.ieeeqp.fa19.ui.new_schedule.FixedEvent;
 import ucsd.ieeeqp.fa19.ui.new_schedule.FlexibleEvent;
 import ucsd.ieeeqp.fa19.ui.new_schedule.NewScheduleActivity;
+import ucsd.ieeeqp.fa19.ui.new_schedule.UserPreferences;
 import ucsd.ieeeqp.fa19.viewmodel.MmServiceViewModel;
 
 import java.util.List;
@@ -57,17 +59,27 @@ public class AllSchedulesFragment extends Fragment {
 
     private void setupRecyclerView(RecyclerView recyclerView) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new AllSchedulesAdapter(mmServiceViewModel.getMmSolveStatusLiveData().getValue());
+        adapter = new AllSchedulesAdapter(mmServiceViewModel.getMmSolveStatusLiveData().getValue(), view -> {
+            int position = recyclerView.getChildLayoutPosition(view);
+            MmSolveStatus status = mmServiceViewModel.getMmSolveStatusLiveData().getValue().get(position);
+            if (status.getDone()) {
+                Intent intent = new Intent(getContext(), DisplayScheduleActivity.class);
+                intent.putExtra(DisplayScheduleActivity.SOLVE_RESULT_OP_PID, status.getPid());
+                startActivity(intent);
+            }
+        });
         recyclerView.setAdapter(adapter);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == RC_NEW_SCHEDULE && resultCode == Activity.RESULT_OK && data != null) {
+            String scheduleName = data.getStringExtra(NewScheduleActivity.SCHEDULE_NAME_EXTRA);
+            UserPreferences preferences = data.getParcelableExtra(NewScheduleActivity.PREFERENCES_EXTRA);
             List<FixedEvent> userFixedEvents = data.getParcelableArrayListExtra(NewScheduleActivity.FIXED_EXTRA);
             List<FlexibleEvent> toPlanEvents = data.getParcelableArrayListExtra(NewScheduleActivity.FLEXIBLE_EXTRA);
-            mmServiceViewModel.submitUnsolvedSchedule(new MmProblemRequest(userFixedEvents, toPlanEvents,
-                    new BaseUserPreferences(0, 0, 0, 0, 0, 0, 0, 0)));
+            MmProblemRequest request = new MmProblemRequest(scheduleName, userFixedEvents, toPlanEvents, preferences, 0);
+            mmServiceViewModel.submitUnsolvedSchedule(request);
         }
     }
 }

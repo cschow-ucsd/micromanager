@@ -8,8 +8,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import call.MmProblemRequest
+import call.MmSolutionResponse
 import call.MmSolveStatus
 import kotlinx.coroutines.launch
+import optaplanner.OpPID
 import ucsd.ieeeqp.fa19.service.MmService
 import java.util.*
 import kotlin.collections.ArrayList
@@ -20,6 +22,8 @@ class MmServiceViewModel(application: Application) : AndroidViewModel(applicatio
     private var mmService: MmService? = null
     private val mmLoginStateLiveData = MutableLiveData(NOT_LOGGED_IN)
     private val mmSolveStatusLiveData = MutableLiveData<ArrayList<MmSolveStatus>>(ArrayList())
+    private val mmSolvedScheduleLiveData = MutableLiveData<MmSolutionResponse>(
+            MmSolutionResponse(emptyList(), emptyList()))
     private val queryTimer: Timer = Timer()
     private var queryStatusTask: TimerTask? = null
 
@@ -83,12 +87,27 @@ class MmServiceViewModel(application: Application) : AndroidViewModel(applicatio
         queryAllStatuses()
     }
 
+    fun getSolveResult(
+            opPID: OpPID
+    ) = viewModelScope.launch {
+        try {
+            val solvedSchedule = mmService!!.getSolutionAsync(opPID).await()
+            mmSolvedScheduleLiveData.postValue(solvedSchedule)
+        } catch (e: Exception) {
+            Log.e(TAG, "Retrieve solved schedule failed", e)
+        }
+    }
+
     fun getMmLoginStateLiveData(): LiveData<Int> {
         return mmLoginStateLiveData
     }
 
     fun getMmSolveStatusLiveData(): LiveData<ArrayList<MmSolveStatus>> {
         return mmSolveStatusLiveData
+    }
+
+    fun getMmSolvedScheduleLiveData(): LiveData<MmSolutionResponse> {
+        return mmSolvedScheduleLiveData
     }
 
     override fun onCleared() {

@@ -10,9 +10,20 @@
     <string name="duration">TextView</string>
     <string name="longitude">TextView</string>
     <string name="latitude">TextView</string>
-    <string name="status_done">Status: Done</string>
-    <string name="status_running">Status: Running</string>
+    <string name="status_done">Done</string>
+    <string name="status_running">Running</string>
     <string name="schedule_new_previous">Previous</string>
     <string name="schedule_new_next">Next</string>
     <string name="schedule_new_submit">Submit</string>
+    <string name="new_planning_events_fragment">Flexible Events</string>
+    <string name="new_fixed_events_fragment">Fixed Events</string>
+    <string name="new_user_prefs_fragment">Create New Schedule</string>
+    <string name="schedule_name">Schedule Name</string>
+    <string name="bf_time">Breakfast Time</string>
+    <string name="lunch_time">Lunch Time</string>
+    <string name="dinner_time">Dinner Time</string>
+    <string name="social_time">Social Time</string>
+    <string name="recreation_time">Recreation Time</string>
+    <string name="schedule_id">ID</string>
+    <string name="schedule_status">Status</string>
 </resources>

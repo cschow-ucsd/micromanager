@@ -1,6 +1,7 @@
 package exposed.dao
 
 import exposed.dsl.MmSolutionEvents
+import exposed.dsl.MmSolutionSchedules
 import exposed.dsl.MmUsers
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
@@ -15,5 +16,5 @@ class MmUser(subject: EntityID<String>) : Entity<String>(subject) {
 
     var email by MmUsers.email
     var refreshToken by MmUsers.refreshToken
-    val opSolutionEvents by MmSolutionEvent referrersOn MmSolutionEvents.mmUserId
+    val schedules by MmSolutionSchedule referrersOn MmSolutionSchedules.mmUserId
 }

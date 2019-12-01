@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import exposed.dsl.MmSessions
 import exposed.dsl.MmSolutionEvents
+import exposed.dsl.MmSolutionSchedules
 import exposed.dsl.MmUsers
 import io.ktor.util.KtorExperimentalAPI
 import org.jetbrains.exposed.sql.Database
@@ -26,7 +27,7 @@ object MmDatabaseFactory {
         Database.connect(hikari())
         transaction {
             addLogger(Slf4jSqlDebugLogger) // use sql with Slf4j logger
-            create(MmUsers, MmSessions, MmSolutionEvents) // create tables
+            create(MmUsers, MmSessions, MmSolutionSchedules, MmSolutionEvents) // create tables
         }
     }
 

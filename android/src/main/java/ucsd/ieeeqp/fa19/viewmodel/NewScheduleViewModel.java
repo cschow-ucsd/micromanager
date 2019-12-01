@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import ucsd.ieeeqp.fa19.ui.new_schedule.FixedEvent;
 import ucsd.ieeeqp.fa19.ui.new_schedule.FlexibleEvent;
+import ucsd.ieeeqp.fa19.ui.new_schedule.UserPreferences;
 
 import java.util.ArrayList;
 
@@ -12,6 +13,8 @@ public class NewScheduleViewModel extends ViewModel {
     private MutableLiveData<ArrayList<FlexibleEvent>> flexibleEventsLiveData = new MutableLiveData<>(new ArrayList<>());
     private MutableLiveData<ArrayList<FixedEvent>> fixedEventsLiveData = new MutableLiveData<>(new ArrayList<>());
     private MutableLiveData<Integer> inputStageLiveData = new MutableLiveData<>(0);
+    private UserPreferences userPreferences = new UserPreferences();
+    private String scheduleName = "";
 
     public void addFlexibleEvent(FlexibleEvent event) {
         ArrayList<FlexibleEvent> flexibleEvents = flexibleEventsLiveData.getValue();
@@ -35,6 +38,22 @@ public class NewScheduleViewModel extends ViewModel {
 
     public LiveData<Integer> getInputStageLiveData() {
         return inputStageLiveData;
+    }
+
+    public UserPreferences getUserPreferences() {
+        return userPreferences;
+    }
+
+    public void setUserPreferences(UserPreferences userPreferences) {
+        this.userPreferences = userPreferences;
+    }
+
+    public String getScheduleName() {
+        return scheduleName;
+    }
+
+    public void setScheduleName(String scheduleName) {
+        this.scheduleName = scheduleName;
     }
 
     public void incrementStage() {

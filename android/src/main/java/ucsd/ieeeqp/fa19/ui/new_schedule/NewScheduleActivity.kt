@@ -14,7 +14,7 @@ import ucsd.ieeeqp.fa19.viewmodel.NewScheduleViewModel
 class NewScheduleActivity : AppCompatActivity() {
     private val inputPagerAdapter: NoSwipePagerAdapter by lazy {
         NoSwipePagerAdapter(supportFragmentManager,
-                NewPlanningEventsFragment(), NewFixedEventsFragment(), NewUserPrefsFragment())
+                NewUserPrefsFragment(), NewPlanningEventsFragment(), NewFixedEventsFragment())
     }
     private val newScheduleViewModel: NewScheduleViewModel by lazy {
         ViewModelProviders.of(this)[NewScheduleViewModel::class.java]
@@ -50,14 +50,19 @@ class NewScheduleActivity : AppCompatActivity() {
     }
 
     private fun submitAndFinish() {
-        val resultIntent = Intent()
-        resultIntent.putParcelableArrayListExtra(FIXED_EXTRA, newScheduleViewModel.fixedEventsLiveData.value)
-        resultIntent.putParcelableArrayListExtra(FLEXIBLE_EXTRA, newScheduleViewModel.flexibleEventsLiveData.value)
+        val resultIntent = Intent().apply {
+            putExtra(SCHEDULE_NAME_EXTRA, newScheduleViewModel.scheduleName)
+            putExtra(PREFERENCES_EXTRA, newScheduleViewModel.userPreferences)
+            putParcelableArrayListExtra(FIXED_EXTRA, newScheduleViewModel.fixedEventsLiveData.value)
+            putParcelableArrayListExtra(FLEXIBLE_EXTRA, newScheduleViewModel.flexibleEventsLiveData.value)
+        }
         setResult(Activity.RESULT_OK, resultIntent)
         finish()
     }
 
     companion object {
+        const val SCHEDULE_NAME_EXTRA = "schedule name extra"
+        const val PREFERENCES_EXTRA = "user preferences extra"
         const val FIXED_EXTRA = "fixed events extra"
         const val FLEXIBLE_EXTRA = "flexible events extra"
     }
