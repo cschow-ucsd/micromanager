@@ -27,4 +27,8 @@
     <string name="schedule_id">ID</string>
     <string name="schedule_status">Status</string>
     <string name="homework_time">Homework Time</string>
+    <string name="hint_name">Name</string>
+    <string name="hint_duration">Duration</string>
+    <string name="hint_longitude">Longitude</string>
+    <string name="hint_latitude">Latitude</string>
 </resources>

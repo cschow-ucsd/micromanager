@@ -6,8 +6,7 @@ open class BaseFlexibleEvent(
         open val duration: Int,
         longitude: Double,
         latitude: Double
-) : BaseEvent(name, longitude, latitude)
-{
+) : BaseEvent(name, longitude, latitude) {
     companion object {
         const val BREAKFAST = "Breakfast"
         const val LUNCH = "Lunch"
@@ -15,5 +14,6 @@ open class BaseFlexibleEvent(
         const val SOCIAL = "Social"
         const val REC = "Recreational"
         const val HW = "Homework"
+        val ALL_TYPES = arrayOf(BREAKFAST, LUNCH, DINNER, SOCIAL, REC, HW)
     }
 }
