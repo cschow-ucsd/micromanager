@@ -24,7 +24,7 @@ class NewPlanningEventsAdapter(
         val event = events[position]
         with(holder.itemView) {
             textview_flexibleitem_name.text = event.name
-            textview_flexibleitem_starttime.text = event.type
+            textview_flexibleitem_type.text = event.type
             textview_flexibleitem_duration.text = event.duration.toString()
             textview_flexibleitem_longitude.text = event.longitude.toString()
             textview_flexibleitem_latitude.text = event.latitude.toString()

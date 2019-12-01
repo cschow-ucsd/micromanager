@@ -31,4 +31,10 @@
     <string name="hint_duration">Duration</string>
     <string name="hint_longitude">Longitude</string>
     <string name="hint_latitude">Latitude</string>
+    <string name="event_type">Type</string>
+    <string name="event_duration">Duration</string>
+    <string name="event_longitude">Longitude</string>
+    <string name="event_latitude">Latitude</string>
+    <string name="event_end">End</string>
+    <string name="event_start">Start</string>
 </resources>

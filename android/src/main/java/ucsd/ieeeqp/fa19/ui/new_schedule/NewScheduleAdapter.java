@@ -27,7 +27,7 @@ public class NewScheduleAdapter extends RecyclerView.Adapter<NewScheduleAdapter.
         public NewScheduleViewHolder(View v) {
             super(v);
             name = v.findViewById(R.id.textview_flexibleitem_name);
-            type = v.findViewById(R.id.textview_flexibleitem_starttime);
+            type = v.findViewById(R.id.textview_flexibleitem_type);
             duration = v.findViewById(R.id.textview_flexibleitem_duration);
             longitude = v.findViewById(R.id.textview_flexibleitem_longitude);
             latitude = v.findViewById(R.id.textview_flexibleitem_latitude);
