@@ -25,7 +25,7 @@ public class OptaplannerTest {
         b.add(new PlanningFlexibleEvent("CSE 20 HW", "HW", 50, 0, 0));
         b.add(new PlanningFlexibleEvent("Work on QP Project", "Club", 120, 0, 0));
         EventSchedule e = new EventSchedule(a, b,
-                new BaseUserPreferences(460, 480, 600, 630, 960, 1000, 60, 60), 0);
+                new BaseUserPreferences(460, 480, 600, 630, 960, 1000, 1000, 1100, 60, 60), 0);
         SolverFactory<EventSchedule> s = SolverFactory.createFromXmlResource("event_schedule_solver_configuration.xml");
         Solver<EventSchedule> test = s.buildSolver();
         EventSchedule x = test.solve(e);

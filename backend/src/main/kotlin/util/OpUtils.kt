@@ -1,11 +1,24 @@
 package util
 
-import call.*
+import api.TravelTimeRequest
+import call.MmProblemRequest
+import call.MmSolutionResponse
+import call.MmSolveStatus
+import exposed.dao.MmSolutionEvent
 import exposed.dao.MmSolutionSchedule
 import exposed.dao.MmUser
 import exposed.dao.toBaseFixed
 import exposed.dsl.MmSolutionEvents
 import exposed.dsl.MmSolutionSchedules
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.apache.Apache
+import io.ktor.client.features.json.GsonSerializer
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.request.post
+import io.ktor.client.request.url
+import io.ktor.client.response.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import optaplanner.*
@@ -13,8 +26,6 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.optaplanner.core.api.solver.Solver
-import java.lang.IllegalStateException
-import java.lang.RuntimeException
 import java.util.*
 
 fun BaseFlexibleEvent.toPlanning(): PlanningFlexibleEvent {
@@ -25,7 +36,7 @@ fun PlanningFlexibleEvent.toPlannedFixed(): PlannedFixedEvent {
     return PlannedFixedEvent(name, startTime, startTime + duration, longitude, latitude)
 }
 
-fun MmSolutionSchedule.Companion.findSolution(
+fun MmSolutionEvent.Companion.findSolution(
         mmUser: MmUser,
         opPID: OpPID
 ): MmSolutionResponse {
@@ -59,6 +70,21 @@ suspend inline fun MmProblemRequest.solve(
         mmUser: MmUser,
         onOpPidCreated: (MmSolveStatus) -> Unit
 ): MmSolveStatus {
+    val client = HttpClient(Apache){
+        install(JsonFeature) {
+            serializer = GsonSerializer {
+                serializeNulls()
+                disableHtmlEscaping()
+            }
+        }
+    }
+    val response = client.post<HttpResponse>{
+        url("api.traveltimeapp.com")
+        contentType(ContentType.Application.Json)
+        body = TravelTimeRequest(emptyList(), emptyList(), emptyList())
+    }
+
+
     val pid = UUID.randomUUID().toString()
     val status = MmSolveStatus(scheduleName, pid, false)
     onOpPidCreated(status)

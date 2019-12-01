@@ -14,5 +14,6 @@ open class BaseFlexibleEvent(
         const val DINNER = "Dinner"
         const val SOCIAL = "Social"
         const val REC = "Recreational"
+        const val HW = "Homework"
     }
 }
