@@ -47,6 +47,8 @@ class NewUserPrefsFragment : Fragment(), RangeBar.OnRangeBarChangeListener, Seek
         rangebar_userprefs_lunchtime.tickEnd = BaseUserPreferences.TIME_MAX.toFloat()
         rangebar_userprefs_dinnertime.tickStart = 0f
         rangebar_userprefs_dinnertime.tickEnd = BaseUserPreferences.TIME_MAX.toFloat()
+        rangebar_userprefs_hwtime.tickStart = 0f
+        rangebar_userprefs_hwtime.tickEnd = BaseUserPreferences.TIME_MAX.toFloat()
         seekbar_userprefs_soctime.max = BaseUserPreferences.TIME_MAX
         seekbar_userprefs_rectime.max = BaseUserPreferences.TIME_MAX
     }
@@ -56,6 +58,7 @@ class NewUserPrefsFragment : Fragment(), RangeBar.OnRangeBarChangeListener, Seek
         rangebar_userprefs_bftime.setOnRangeBarChangeListener(this)
         rangebar_userprefs_lunchtime.setOnRangeBarChangeListener(this)
         rangebar_userprefs_dinnertime.setOnRangeBarChangeListener(this)
+        rangebar_userprefs_hwtime.setOnRangeBarChangeListener(this)
         seekbar_userprefs_soctime.setOnSeekBarChangeListener(this)
         seekbar_userprefs_rectime.setOnSeekBarChangeListener(this)
     }
@@ -105,6 +108,14 @@ class NewUserPrefsFragment : Fragment(), RangeBar.OnRangeBarChangeListener, Seek
                         prefs.copy(_dinnerStartTime = leftPinIndex, _dinnerEndTime = rightPinIndex)
                 textview_userprefs_dinnertime.apply {
                     setText(R.string.dinner_time)
+                    append(" ($leftPinIndex, $rightPinIndex)")
+                }
+            }
+            rangebar_userprefs_hwtime.id -> {
+                newScheduleViewModel.userPreferences =
+                        prefs.copy(_hwStartTime = leftPinIndex, _hwEndTime = rightPinIndex)
+                textview_userprefs_hwtime.apply {
+                    setText(R.string.homework_time)
                     append(" ($leftPinIndex, $rightPinIndex)")
                 }
             }

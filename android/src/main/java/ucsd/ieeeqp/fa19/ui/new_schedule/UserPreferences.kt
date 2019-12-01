@@ -13,6 +13,8 @@ data class UserPreferences(
         val _lunchEndTime: Int = 0,
         val _dinnerStartTime: Int = 0,
         val _dinnerEndTime: Int = 0,
+        val _hwStartTime: Int = 0,
+        val _hwEndTime: Int = 0,
         val _socTime: Int = 0,
         val _recTime: Int = 0
 ) : BaseUserPreferences(
@@ -22,6 +24,8 @@ data class UserPreferences(
         _lunchEndTime,
         _dinnerStartTime,
         _dinnerEndTime,
+        _hwStartTime,
+        _hwEndTime,
         _socTime,
         _recTime
 ), Parcelable

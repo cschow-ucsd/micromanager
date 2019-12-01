@@ -30,7 +30,7 @@ public class GoogleSignInViewModel extends AndroidViewModel {
 
         // sign in configuration
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestServerAuthCode(application.getString(R.string.oauth_client_id))
+                .requestServerAuthCode(application.getString(R.string.google_client_id))
                 .requestEmail()
                 .requestScopes(new Scope("https://www.googleapis.com/auth/calendar"))
                 .build();

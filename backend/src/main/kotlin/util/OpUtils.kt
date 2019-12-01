@@ -36,7 +36,7 @@ fun PlanningFlexibleEvent.toPlannedFixed(): PlannedFixedEvent {
     return PlannedFixedEvent(name, startTime, startTime + duration, longitude, latitude)
 }
 
-fun MmSolutionEvent.Companion.findSolution(
+fun MmSolutionSchedule.Companion.findSolution(
         mmUser: MmUser,
         opPID: OpPID
 ): MmSolutionResponse {
@@ -70,19 +70,19 @@ suspend inline fun MmProblemRequest.solve(
         mmUser: MmUser,
         onOpPidCreated: (MmSolveStatus) -> Unit
 ): MmSolveStatus {
-    val client = HttpClient(Apache){
-        install(JsonFeature) {
-            serializer = GsonSerializer {
-                serializeNulls()
-                disableHtmlEscaping()
-            }
-        }
-    }
-    val response = client.post<HttpResponse>{
-        url("api.traveltimeapp.com")
-        contentType(ContentType.Application.Json)
-        body = TravelTimeRequest(emptyList(), emptyList(), emptyList())
-    }
+//    val client = HttpClient(Apache){
+//        install(JsonFeature) {
+//            serializer = GsonSerializer {
+//                serializeNulls()
+//                disableHtmlEscaping()
+//            }
+//        }
+//    }
+//    val response = client.post<HttpResponse>{
+//        url("api.traveltimeapp.com")
+//        contentType(ContentType.Application.Json)
+//        body = TravelTimeRequest(emptyList(), emptyList(), emptyList())
+//    }
 
 
     val pid = UUID.randomUUID().toString()
